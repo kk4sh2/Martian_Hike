@@ -33,9 +33,13 @@ async function boot() {
   onChange((_s, why) => { syncArea(); renderPlanner(why); if (view === 'tablet') drawTablet(); });
   document.querySelectorAll<HTMLButtonElement>('#areaSel button').forEach((b) => b.onclick = () => { state.area = b.dataset.area as AreaId; emit('area'); });
   document.querySelectorAll<HTMLButtonElement>('#viewSel button').forEach((b) => b.onclick = () => setView(b.dataset.view as any));
-  $('#demoBtn').onclick = () => openModal(`<h2>Guided demos</h2><p>Step-by-step walkthroughs. You can go back, restart or exit at any time.</p>
-     <div class="row"><button class="primary" id="dN">Nili Patera: changed ground on the route</button><button id="dJ">Jezero Crater: science walk</button></div>`);
-  document.addEventListener('click', (e) => { const t = e.target as HTMLElement; if (t.id === 'dN' || t.id === 'dJ') { $('#modal').hidden = true; startDemo(t.id === 'dN' ? 'nili' : 'jezero'); } });
+  $('#demoBtn').onclick = () => openModal(`<h2>Guided demos</h2><p>Short walkthroughs in plain language. Press Next to move on; you can go back or exit at any time.</p>
+     <div class="demoChoices">
+       <button class="primary" id="dT">🌍 Tour of Mars<small>Spin the globe and visit famous places, then measure the distance between our two sites. About 2 minutes.</small></button>
+       <button id="dN">🏜 Nili Patera: the ground moved<small>Two photos taken months apart show moving sand. See how MarsDelta warns a walking astronaut.</small></button>
+       <button id="dJ">🪨 Jezero Crater: a science walk<small>Plan a walk to real rover stops, check oxygen and weather, and handle crew problems.</small></button>
+     </div>`);
+  document.addEventListener('click', (e) => { const t = (e.target as HTMLElement).closest('button'); if (t && (t.id === 'dN' || t.id === 'dJ' || t.id === 'dT')) { $('#modal').hidden = true; startDemo(t.id === 'dN' ? 'nili' : t.id === 'dJ' ? 'jezero' : 'tour'); } });
   $('#sourcesBtn').onclick = () => openSources();
   panelToggle();
   syncArea(); setView('planner'); renderPlanner('area');

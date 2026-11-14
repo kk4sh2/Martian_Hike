@@ -143,10 +143,15 @@ const rec = (name, pass, detail) => { results.push({ name, pass, detail }); cons
   // 9. guided Nili demo
   await p.click('#viewSel button[data-view=planner]');
   await p.click('#demoBtn'); await p.click('#dN'); await p.waitForTimeout(800);
-  for (let i = 0; i < 6; i++) { await p.click('#dNext'); await p.waitForTimeout(i === 3 ? 2500 : 900); }
+  for (let i = 0; i < 12 && (await p.textContent('#dNext')) !== 'Finish'; i++) { await p.click('#dNext'); await p.waitForTimeout(1500); }
   const logTxt = await p.textContent('#cLog');
   rec('Guided Nili demo runs end to end and logs the decision', /Acknowledged crossing of NP-/.test(logTxt) && /Bypass search/.test(logTxt) && /repeat observation PSP_005684_1890/.test(logTxt), 'log contains simulated receipt, bypass result and acknowledgement');
   await p.click('#dNext').catch(() => {});
+  await p.click('#demoBtn'); await p.click('#dT'); await p.waitForTimeout(2000);
+  const tourSeen = []; for (let i = 0; i < 12; i++) { tourSeen.push((await p.textContent('#demo h4')).split('·')[0].trim()); if ((await p.textContent('#dNext')) === 'Finish') break; await p.click('#dNext'); await p.waitForTimeout(1900); if (/How far apart/.test(await p.textContent('#demo h4'))) tourSeen.push('dist:' + ((await p.textContent('#globeDist').catch(() => '')) || 'none')); }
+  const hlTxt = await p.$$eval('.gHl', (e) => e.map((x) => x.textContent));
+  rec('Tour of Mars demo flies the globe to highlighted places and measures Jezero to Nili', tourSeen.length >= 8 && tourSeen.some((t) => /^dist:\d/.test(t)) && hlTxt.length <= 1, tourSeen.join(' → '));
+  await p.click('#dNext').catch(() => {}); await p.click('#viewSel button[data-view=planner]');
 
   // 10. offline after caching
   await p.goto(BASE, { waitUntil: 'networkidle' });

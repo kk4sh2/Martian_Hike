@@ -162,3 +162,8 @@ button.danger { background: #3a1414; border-color: var(--bad); color: #ffd6d6; f
 #tabletView .instr.bad { background: #3a1414; border-color: var(--bad); }
 .survStrip { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0; }
 .survStrip div { background: var(--panel2); border-radius: 8px; padding: 6px 8px; } .survStrip small { display: block; font-size: 11.5px; } .survStrip b { font-size: 14px; }
+.gHl { position: absolute; transform: translate(-50%, calc(-100% - 34px)); background: #ffc94d; color: #1a1205; font-weight: 700; font-size: 14px; padding: 6px 12px; border-radius: 10px; white-space: nowrap; box-shadow: 0 4px 16px #000a; pointer-events: none; }
+.gHl::after { content: ''; position: absolute; left: 50%; bottom: -8px; transform: translateX(-50%); border: 8px solid transparent; border-top-color: #ffc94d; border-bottom: 0; }
+.demoBar p { font-size: 15.5px; line-height: 1.5; }
+.demoBar .look { font-size: 13.5px; color: var(--muted); margin: -4px 0 8px; } .demoBar .look b { color: #ffc94d; }
+.demoChoices { display: grid; gap: 10px; } .demoChoices button { text-align: left; padding: 12px 14px; min-height: 64px; } .demoChoices button small { display: block; margin-top: 3px; }

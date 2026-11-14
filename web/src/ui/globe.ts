@@ -42,6 +42,28 @@ let markers: THREE.Group, arc: THREE.Line | null = null;
 const picks: { lat: number; lon: number }[] = [];
 let labelEls: HTMLElement[] = [];
 let raf = 0;
+let fly: { from: THREE.Vector3; to: THREE.Vector3; t0: number; dur: number } | null = null;
+let hl: THREE.Group | null = null; let hlLabel: HTMLElement | null = null; let hlPos: THREE.Vector3 | null = null;
+let pending: (() => void) | null = null;
+
+/** Smoothly turn the globe so (lat, lon) faces the viewer. alt = camera distance in globe radii. */
+export function flyTo(lat: number, lon: number, alt = 2.4, dur = 1600) {
+  if (!renderer) { pending = () => flyTo(lat, lon, alt, dur); return; }
+  fly = { from: camera.position.clone(), to: vec(lat, lon, alt), t0: performance.now(), dur };
+}
+/** Pulsing ring + caption at a place. */
+export function highlight(lat: number, lon: number, label: string, radiusDeg = 4) {
+  if (!renderer) { pending = () => highlight(lat, lon, label, radiusDeg); return; }
+  clearHighlight();
+  hl = new THREE.Group();
+  const n = vec(lat, lon).normalize(); const ringR = Math.sin(radiusDeg * Math.PI / 180);
+  const ring = new THREE.Mesh(new THREE.RingGeometry(ringR * 0.86, ringR, 64), new THREE.MeshBasicMaterial({ color: 0xffc94d, transparent: true, opacity: 0.95, side: THREE.DoubleSide, depthTest: false }));
+  ring.position.copy(n.clone().multiplyScalar(R * Math.cos(radiusDeg * Math.PI / 180) + 0.004)); ring.lookAt(n.clone().multiplyScalar(5)); hl.add(ring);
+  scene.add(hl); hlPos = vec(lat, lon, R * 1.01);
+  hlLabel = document.createElement('div'); hlLabel.className = 'gHl'; hlLabel.textContent = label; $('#globeLabels').appendChild(hlLabel);
+}
+export function clearHighlight() { if (hl) scene.remove(hl); hl = null; hlLabel?.remove(); hlLabel = null; hlPos = null; }
+export function clearPoints() { picks.length = 0; if (renderer) { drawPicks(); card(); } }
 
 export function initGlobe() {
   const el = $('#globeView');
@@ -72,7 +94,7 @@ function setup() {
     const d = document.createElement(p.area ? 'button' : 'div'); d.className = `gLabel ${p.area ? 'area' : ''}`; d.textContent = p.name;
     if (p.area) (d as HTMLButtonElement).onclick = (e) => { e.stopPropagation(); state.area = p.area!; emit('area'); (window as any).__setView?.('planner'); };
     lab.appendChild(d);
-    const dot = new THREE.Mesh(new THREE.SphereGeometry(p.area ? 0.012 : 0.007, 12, 8), new THREE.MeshBasicMaterial({ color: p.area ? 0xff8a3d : 0xffffff }));
+    const dot = new THREE.Mesh(new THREE.SphereGeometry(p.area ? 0.006 : 0.004, 12, 8), new THREE.MeshBasicMaterial({ color: p.area ? 0xff8a3d : 0xffffff }));
     dot.position.copy(vec(p.lat, p.lon, R * 1.001)); scene.add(dot);
     return d;
   });
@@ -106,7 +128,7 @@ export function addPoint(lat: number, lon: number) {
 
 function drawPicks() {
   markers.clear(); if (arc) { scene.remove(arc); arc = null; }
-  picks.forEach((p, i) => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.016, 16, 10), new THREE.MeshBasicMaterial({ color: i ? 0x5ec8ff : 0x5fd38d })); m.position.copy(vec(p.lat, p.lon, R * 1.002)); markers.add(m); });
+  picks.forEach((p, i) => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.008, 16, 10), new THREE.MeshBasicMaterial({ color: i ? 0x5ec8ff : 0x5fd38d })); m.position.copy(vec(p.lat, p.lon, R * 1.002)); markers.add(m); });
   if (picks.length === 2) {
     const a = vec(picks[0].lat, picks[0].lon).normalize(), b = vec(picks[1].lat, picks[1].lon).normalize();
     const ang = a.angleTo(b); const pts: THREE.Vector3[] = [];
@@ -132,17 +154,23 @@ function card() {
 
 function loop() {
   raf = requestAnimationFrame(loop);
+  if (fly) { const t = Math.min(1, (performance.now() - fly.t0) / fly.dur); const e = t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
+    const a = fly.from.clone().normalize(), b = fly.to.clone().normalize(); const ang = a.angleTo(b); const sn = Math.sin(ang) || 1;
+    const dir = ang < 1e-4 ? b : a.multiplyScalar(Math.sin((1 - e) * ang) / sn).add(b.multiplyScalar(Math.sin(e * ang) / sn));
+    camera.position.copy(dir.normalize().multiplyScalar(fly.from.length() + (fly.to.length() - fly.from.length()) * e)); camera.lookAt(0, 0, 0); if (t >= 1) fly = null; }
+  if (hl) { const k = 1 + 0.12 * Math.sin(performance.now() / 300); hl.children[0].scale.setScalar(k); }
   controls.update(); renderer!.render(scene, camera);
+  if (hlLabel && hlPos) { const r0 = renderer!.domElement.getBoundingClientRect(); const vis = hlPos.clone().normalize().dot(camera.position.clone().normalize()) > 0.1; hlLabel.style.display = vis ? '' : 'none'; const s0 = hlPos.clone().project(camera); hlLabel.style.left = `${(s0.x + 1) / 2 * r0.width}px`; hlLabel.style.top = `${(1 - s0.y) / 2 * r0.height}px`; }
   const r = renderer!.domElement.getBoundingClientRect(); const camDir = camera.position.clone().normalize();
   PLACES.forEach((p, i) => {
-    const v = vec(p.lat, p.lon); const vis = v.clone().normalize().dot(camDir) > 0.15; const el = labelEls[i];
+    const v = vec(p.lat, p.lon); const el = labelEls[i]; const vis = v.clone().normalize().dot(camDir) > 0.15 && !(hlLabel && hlLabel.textContent === p.name);
     if (!vis) { el.style.display = 'none'; return; }
     const s = v.clone().project(camera); el.style.display = ''; el.style.left = `${(s.x + 1) / 2 * r.width}px`; el.style.top = `${(1 - s.y) / 2 * r.height}px`;
   });
 }
 
 export function showGlobe(on: boolean) {
-  if (on) { if (!renderer && !setup()) return; resize(); card(); cancelAnimationFrame(raf); loop(); }
+  if (on) { if (!renderer && !setup()) return; resize(); card(); cancelAnimationFrame(raf); loop(); if (pending) { const f = pending; pending = null; f(); } }
   else cancelAnimationFrame(raf);
 }
 
