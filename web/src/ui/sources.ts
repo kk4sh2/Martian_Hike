@@ -16,7 +16,7 @@ function tag(k: string) { return `<span class="tag ${k === 'measured' ? 'obs' : 
 function areaOf(key: string, v: any): 'Jezero Crater' | 'Nili Patera' | 'Other' {
   const t = `${key} ${v.product_id ?? ''} ${v.purpose ?? ''}`.toLowerCase();
   if (/nili|psp_|pia1/.test(t)) return 'Nili Patera';
-  if (/jezero|zl\d|m20|jez_|sim3464|mastcam|perseverance/.test(t)) return 'Jezero Crater';
+  if (/jezero|zl\d|m20|jez_|sim3464|mastcam|perseverance|mars2020|meda/.test(t)) return 'Jezero Crater';
   return 'Other';
 }
 
@@ -36,7 +36,7 @@ function datasets() {
   return `<p class="note">Every file was downloaded and hashed by the data pipeline (v${esc(m?.pipeline_version)}, updated ${esc(m?.updated)}). Nothing is typed in by hand.</p>` +
     Object.entries(groups).filter(([, l]) => l.length).map(([g, l]) => `<h3>${g === 'Other' ? 'Shared / climate' : g}</h3>
     <table class="cmp"><tr><th>Product</th><th>Used for</th><th>Credit</th><th>SHA-256</th></tr>${l.map(([, v]) => `<tr><td><a href="${esc(v.resolved_url ?? v.url)}" target="_blank" rel="noopener">${esc(v.product_id ?? '')}</a></td><td>${esc(v.purpose ?? '')}</td><td><small>${esc(v.credit ?? '')}</small></td><td><small>${esc((v.sha256 ?? '').slice(0, 12))}…</small></td></tr>`).join('')}</table>`).join('') +
-    `<h3>Not available</h3><ul class="note"><li>Perseverance MEDA weather readings: the archive could not be reached when the data was built, so no readings are shown.</li><li>A terrain model for the Nili Patera site, so no climb, slope or bypass route there.</li></ul>`;
+    `<h3>Not available</h3><ul class="note"><li>Full-resolution Perseverance MEDA readings (the PDS archive could not be reached when the data was built). NASA's daily MEDA summaries for the latest published sols are used instead.</li><li>A terrain model for the Nili Patera site, so no climb, slope or bypass route there.</li></ul>`;
 }
 
 function change() {
@@ -74,7 +74,11 @@ function weather() {
   const meda = app.b.meda;
   const dustBlock = (k: 'jezero' | 'nili', name: string) => { const d = app.b.dust.areas[k]; const dv = d.series.filter((s: any) => s.cdod610 !== null);
     return `<h3>${name}: regional dust</h3><p class="note">${esc(d.quantity)} (${esc(d.units)}), LMD/Montabone gridded maps, cell ${d.cell.lat_min}-${d.cell.lat_max}° N × ${d.cell.lon_min}-${d.cell.lon_max}° E. Window: ${esc(d.window_reason)}. ${dv.length} of ${d.series.length} steps have data${dv.length ? `; range ${Math.min(...dv.map((s: any) => s.cdod610)).toFixed(2)}-${Math.max(...dv.map((s: any) => s.cdod610)).toFixed(2)}` : ''}.</p>${sparkline(d.series)}<p class="note">${esc(d.caveat)}</p>`; };
-  return `<h3>Jezero surface weather (MEDA)</h3><p>${meda.status === 'available' ? `Archived Perseverance MEDA readings for ${meda.sols?.length ?? 0} sol(s). Shown as past measurements, never as a forecast.` : `Not available: ${esc((meda as any).reason ?? 'no readings packaged')}`}</p>
+  const md = app.b.medaDaily;
+  return `<h3>Jezero surface weather (MEDA)</h3>
+    <p>${md ? `Daily summaries for sols ${md.sols[0].sol}–${md.sols[md.sols.length - 1].sol}, as published by NASA (${esc(md.source)}), captured ${esc(md.retrieved.slice(0, 10))}. Low and high air temperature, pressure, sunrise and sunset. Values NASA left blank are shown as gaps. The station position for each sol is the rover's localization on or before that sol.` : 'No daily summaries packaged.'}</p>
+    <p>Full-resolution MEDA readings: ${meda.status === 'available' ? `${meda.sols?.length ?? 0} sol(s) packaged.` : `not available. ${esc((meda as any).reason ?? '')}`}</p>
+    <p class="note">The published summaries cover the latest sols only, not the sols of the planned walk, and the station can be kilometres from the landing pin. They describe conditions at the rover, not a forecast.</p>
     <h3>Nili Patera surface weather</h3><p>None. There is no station near this site, and Jezero readings are never shown for it.</p>
     ${dustBlock('jezero', 'Jezero')}${dustBlock('nili', 'Nili Patera')}`;
 }

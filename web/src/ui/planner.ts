@@ -14,6 +14,7 @@ import { dropTablet, pickUpTablet, setComms, powerSpareSuit, moveSuit, step, fix
 import { routeLeg, PROFILES } from '../core/routing';
 import { openPhoto } from './photo';
 import { openSources } from './sources';
+import { survivalHtml, medaDailyHtml, turnBack, survivalSettings, dustAdvisory } from './survivalui';
 
 let map: L.Map;
 const groups: Record<string, L.LayerGroup> = {};
@@ -137,6 +138,8 @@ function buildLayers(area: AreaId, fit: boolean) {
     const html = i === 0 ? '<div class="habIcon" style="width:30px;height:30px">H</div>' : `<div class="stopIcon ${s.required ? 'req' : ''}" style="width:28px;height:28px">${i}</div>`;
     sg.addLayer(L.marker(ll(s.xy), { icon: L.divIcon({ className: '', html, iconSize: [30, 30] }) }).bindTooltip(`${esc(s.label)}${s.required ? ' <b>(required)</b>' : ''}`));
   });
+  const tb = turnBack(area);
+  if (tb && tb.xy) group('turn', 'Turn-back point (↩)', 'sim', '#ffc94d').addLayer(L.marker(ll(tb.xy), { icon: L.divIcon({ className: '', html: '<div class="turnIcon">↩</div>', iconSize: [28, 28] }) }).bindTooltip(`Turn back here if consumables run ${tb.factor}× faster than planned`));
   // crossings (Nili)
   if (act && act.impact.status === 'intersects') {
     const cg = group('cross', 'Crossings to inspect (tap)', 'derived', '#ff3df0');
@@ -203,6 +206,7 @@ function renderPanel(area: AreaId) {
   html.push(card('cRoutes', 'Route', area === 'nili' ? sim : '', routesHtml(area, plans)));
   if (area === 'nili') html.push(card('cChange', 'Ground change alerts', '', changeHtml(plans)));
   html.push(card('cMC', 'Can we make it back?', '', mcHtml(plans)));
+  html.push(card('cSurv', 'Survival check', '<span class="tag sim">model</span>', survivalHtml(area)));
   if (area === 'jezero') {
     html.push(card('cBrief', 'Landing site', '', briefingHtml()));
     html.push(card('cWx', 'Weather', '', weatherHtml('jezero')));
@@ -286,24 +290,14 @@ function briefingHtml() {
 }
 
 function weatherHtml(area: AreaId) {
-  if (area === 'nili') return `<div class="warnbox">No surface weather is shown for Nili Patera. There is no weather station near this site.</div><div class="note"><a href="#" data-src="weather">Regional dust history</a></div>`;
+  const dust = dustAdvisory(area);
+  const dustLine = dust ? `<div class="note"><b>Dust:</b> ${esc(dust.text)} <a href="#" data-src="weather">Dust history</a></div>` : '';
+  if (area === 'nili') return `<div class="warnbox">No surface weather is shown for Nili Patera. There is no weather station near this site.</div>${dustLine}`;
+  const daily = medaDailyHtml(state.areas.jezero.landingPin);
+  if (daily) return daily + dustLine;
   const meda = app.b.meda; const a = state.areas.jezero;
-  const sols = meda.sols ?? [];
-  const sol = a.weatherSol ?? sols[0]?.sol ?? null;
-  const cardv = weatherCard(meda, a.landingPin, sol, a.weatherMinute, app.b.terrain.covered(...a.landingPin));
-  if (cardv.kind === 'unavailable') return `<div class="warnbox"><b>${esc(cardv.title)}</b><br>No weather readings are loaded for this site, so none are shown.</div><div class="note"><a href="#" data-src="weather">Regional dust history</a></div>`;
-  const S = sols.find((s) => s.sol === sol);
-  let tl = '';
-  if (S) {
-    const n = S.samples.length; const bins = 60; tl = '<div class="timeline">';
-    for (let i = 0; i < bins; i++) { const lo = Math.floor(i * n / bins), hi = Math.floor((i + 1) * n / bins); const has = S.samples.slice(lo, Math.max(hi, lo + 1)).some((s) => s.pressure_pa !== null || s.air_temp_k !== null); const cur = a.weatherMinute >= lo && a.weatherMinute < Math.max(hi, lo + 1); tl += `<i class="${has ? 'v' : 'g'} ${cur ? 'cur' : ''}"></i>`; }
-    tl += '</div>';
-  }
-  return `<div class="row"><label>Sol <select id="wxSol">${sols.map((s) => `<option ${s.sol === sol ? 'selected' : ''}>${s.sol}</option>`).join('')}</select></label><input id="wxMin" type="range" min="0" max="${(S?.samples.length ?? 1) - 1}" value="${a.weatherMinute}"></div>${tl}
-    <div class="${cardv.flag === 'ok' ? 'okbox' : 'warnbox'}"><b>${esc(cardv.title)}</b>
-    <dl class="kv"><dt>When</dt><dd>${esc(cardv.when)}</dd><dt>Distance to pin</dt><dd>${cardv.distance_m === null ? '—' : fmtM(cardv.distance_m)}</dd>${cardv.values.map((v) => `<dt>${esc(v.label)}</dt><dd>${esc(v.value)}</dd>`).join('')}
-    <dt>Missing</dt><dd>${esc(cardv.missing)}</dd></dl></div>
-    <div class="note">Past measurements, not a forecast.</div>`;
+  const cardv = weatherCard(meda, a.landingPin, null, a.weatherMinute, app.b.terrain.covered(...a.landingPin));
+  return `<div class="warnbox"><b>${esc(cardv.title)}</b><br>No weather readings are loaded for this site, so none are shown.</div>${dustLine}`;
 }
 
 export function sparkline(series: any[]) {
@@ -360,6 +354,8 @@ function bindPanel(area: AreaId) {
   });
   el.querySelectorAll<HTMLInputElement>('[data-s]').forEach((i) => i.onchange = () => { (state as any)[i.dataset.s!] = Math.max(1, Math.round(+i.value)); emit('assumptions'); });
   const mr = el.querySelector<HTMLButtonElement>('#mcReset'); if (mr) mr.onclick = async () => { const { DEFAULT_ASSUMPTIONS } = await import('../core/metrics'); state.assumptions = { ...DEFAULT_ASSUMPTIONS }; state.trials = 500; state.seed = 2026; emit('assumptions'); };
+  const svS = el.querySelector<HTMLInputElement>('#svStart'); if (svS) svS.onchange = () => { survivalSettings.startLmst = svS.value || '09:00'; renderPlanner('survival'); };
+  const svF = el.querySelector<HTMLInputElement>('#svFactor'); if (svF) svF.onchange = () => { survivalSettings.factor = Math.max(1, +svF.value || 1.5); renderPlanner('survival'); };
   const ws = el.querySelector<HTMLSelectElement>('#wxSol'); if (ws) ws.onchange = () => { state.areas.jezero.weatherSol = +ws.value; state.areas.jezero.weatherMinute = 0; emit('weather'); };
   const wm = el.querySelector<HTMLInputElement>('#wxMin'); if (wm) wm.oninput = () => { state.areas.jezero.weatherMinute = +wm.value; renderPanel('jezero'); };
   el.querySelectorAll<HTMLElement>('[data-src]').forEach((a) => a.onclick = (e) => { e.preventDefault(); openSources(a.dataset.src!); });

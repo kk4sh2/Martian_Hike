@@ -7,6 +7,17 @@
       "purpose": "MarsDelta derived evidence record",
       "sha256": "512042d029ceb7af67b021124e8039d229bfcfb022944aab21444a75a141d1b1"
     },
+    "globe_viking_mdim21": {
+      "bytes": 2100690,
+      "credit": "NASA/JPL-Caltech/USGS (Viking MDIM 2.1), via NASA Mars Trek",
+      "local_path": "web/public/data/globe/mars_viking_color_4k.jpg",
+      "product_id": "Mars_Viking_MDIM21_ClrMosaic_global_232m",
+      "purpose": "Global basemap for the 3D globe (16x8 tiles at zoom 3, stitched)",
+      "resolved_url": "https://trek.nasa.gov/mars/",
+      "retrieved": "2026-11-14T12:54:34+00:00",
+      "sha256": "d0d1a765c3f666272768221ccaaa4bae6419e0a66aa1e5a1045be630b6a1922b",
+      "url": "https://trek.nasa.gov/tiles/Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m/1.0.0/default/default028mm/3/{row}/{col}.jpg"
+    },
     "hirise_PSP_004339_1890_RED_JP2": {
       "bytes": 874847939,
       "credit": "NASA/JPL-Caltech/University of Arizona (HiRISE)",
@@ -183,6 +194,17 @@
       "sha256": "d17e02c3ea109b0acde759097fa4505b4e92aa85677d9469c5189f47cfd01a5b",
       "url": "https://mars.nasa.gov/rss/api/?feed=raw_images&category=mars2020&feedtype=json&id=ZL5_0464_0708122319_318ECM_N0260630ZCAM03377_1100LMJ"
     },
+    "mars2020_weather_feed": {
+      "bytes": 1368,
+      "credit": "NASA/JPL-Caltech/CAB(CSIC-INTA)",
+      "local_path": "data/raw/meda/m20_weather_feed.json",
+      "product_id": "Mars 2020 MEDA daily weather summary feed",
+      "purpose": "Jezero surface weather: MEDA daily min/max air temperature, pressure, sunrise/sunset",
+      "resolved_url": "https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json",
+      "retrieved": "2026-11-14T12:53:39+00:00",
+      "sha256": "9ff9db7675b5165e6d0547f9b86b75cea2cd1badfd27ea5aec4fe6956a47ac35",
+      "url": "https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json"
+    },
     "nasa_PIA12857.jpg": {
       "bytes": 82613,
       "credit": "NASA/JPL-Caltech/University of Arizona",
@@ -357,5 +379,5 @@
       "url": "https://pubs.usgs.gov/sim/3464/sim3464_database.zip"
     }
   },
-  "updated": "2026-11-14T09:15:59+00:00"
+  "updated": "2026-11-14T12:54:34+00:00"
 }

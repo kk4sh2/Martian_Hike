@@ -31,7 +31,7 @@ export interface Waypoint { rmc: string; sol: number; x: number; y: number; lon:
 
 export interface Bundles {
   terrainMeta: TerrainMeta & Record<string, any>; terrain: Terrain; waypoints: Waypoint[]; traverse: any; geology: any;
-  photos: Photo[]; meda: MedaBundle; dust: any; nili: ChangeEvidence; manifest: any;
+  photos: Photo[]; meda: MedaBundle; medaDaily: import('./ui/survivalui').MedaDaily | null; dust: any; nili: ChangeEvidence; manifest: any;
 }
 
 function bounds(rings: Rings[]): [number, number, number, number] {
@@ -47,11 +47,12 @@ export async function loadAll(): Promise<Bundles> {
     j<any>('jezero/photos.json'), j<MedaBundle>('jezero/meda.json'), j<any>('dust_context.json'), j<any>('nili/change_evidence.json'),
     j<any>('source_manifest.json').catch(() => null),
   ]);
+  const medaDaily = await j<any>('jezero/meda_daily.json').catch(() => null);
   nili.regions.forEach((r: Region) => { r.polys = geomToPolys(r.geometry_local_m); });
   nili.coveragePolys = geomToPolys(nili.crop.valid_footprint_local_m);
   nili.cropBounds = bounds(geomToPolys(nili.crop.footprint_local_m));
   return { terrainMeta: tm, terrain: new Terrain(tm, elev), waypoints: wp.stops, traverse: trv, geology: geo, photos: ph.photos,
-    meda, dust, nili, manifest };
+    meda, medaDaily, dust, nili, manifest };
 }
 
 /** Route options. Jezero options are computed on the DTM; Nili options are authored hypothetical walks. */

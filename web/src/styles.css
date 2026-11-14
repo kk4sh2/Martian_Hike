@@ -134,3 +134,31 @@ label.inp { justify-content: space-between; font-size: 13px; } label.inp input[t
 .evLead { margin: 0 0 8px; font-size: 15px; }
 .evActions button { min-height: 48px; }
 details.evMore { border-top: 1px solid var(--line); padding-top: 4px; }
+/* globe */
+#globeView { height: 100%; }
+.globeWrap { position: relative; height: 100%; overflow: hidden; }
+#globeCanvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: crosshair; }
+#globeLabels { position: absolute; inset: 0; pointer-events: none; }
+.gLabel { position: absolute; transform: translate(10px, -50%); font-size: 12px; color: #eee; text-shadow: 0 1px 3px #000, 0 0 6px #000; white-space: nowrap; }
+.gLabel.area { pointer-events: auto; font-size: 13px; font-weight: 700; color: var(--accent); background: rgba(15,17,21,.8); border: 1px solid var(--accent); border-radius: 8px; padding: 6px 10px; min-height: 36px; }
+.globeCard { position: absolute; top: 14px; right: 14px; width: 320px; max-width: calc(100% - 28px); background: rgba(23,26,33,.95); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.globeCard h3 { margin: 0 0 8px; font-size: 15px; }
+.gDot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+.gDist { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; margin: 8px 0; display: flex; flex-direction: column; gap: 2px; }
+.gDist b { font-size: 28px; color: #ffc94d; }
+.globeHint { position: absolute; left: 14px; bottom: 14px; font-size: 12px; color: var(--muted); background: rgba(15,17,21,.85); padding: 6px 10px; border-radius: 8px; }
+/* survival + weather */
+.sList { display: flex; flex-direction: column; gap: 6px; }
+.sRow { display: flex; gap: 10px; align-items: flex-start; background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--line); border-radius: 8px; padding: 7px 10px; }
+.sRow.sOk { border-left-color: var(--ok); } .sRow.sBad { border-left-color: var(--warn); }
+.sRow b { display: block; font-size: 14px; } .sRow small { display: block; font-size: 12px; line-height: 1.35; }
+.sIco { font-size: 18px; width: 22px; text-align: center; flex: none; }
+.turnIcon { width: 28px; height: 28px; border-radius: 50%; background: #ffc94d; color: #1a1205; font-weight: 800; display: grid; place-items: center; border: 2px solid #fff; font-size: 16px; }
+.wxGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 6px 0; } .wxGrid div { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; }
+.wxGrid small { display: block; } .wxGrid b { font-size: 18px; }
+.gap { color: var(--warn); font-weight: 400; font-size: 13px; }
+table.wxTable tr.act td { background: #262b35; }
+button.danger { background: #3a1414; border-color: var(--bad); color: #ffd6d6; font-weight: 600; }
+#tabletView .instr.bad { background: #3a1414; border-color: var(--bad); }
+.survStrip { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0; }
+.survStrip div { background: var(--panel2); border-radius: 8px; padding: 6px 8px; } .survStrip small { display: block; font-size: 11.5px; } .survStrip b { font-size: 14px; }

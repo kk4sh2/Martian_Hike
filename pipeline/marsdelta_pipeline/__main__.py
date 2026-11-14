@@ -5,7 +5,8 @@
   nili-process    re-run Nili processing only (observations already downloaded)
   jezero          Jezero corridor: DTM/ortho range reads, waypoints, geology, ground photos
   dust            LMD regional dust cells for both areas
-  meda            parse MEDA CSV + PDS4 labels from data/raw/meda (writes 'unavailable' status if none)
+  meda            NASA MEDA daily summary feed + any MEDA CSV/PDS4 labels in data/raw/meda
+  globe           stitch the global Viking colour mosaic (NASA Mars Trek tiles) for the 3D globe
   validate        provenance and data-integrity checks (non-zero exit on failure)
   pack            build the offline demo pack (needs `npm run build` in web/ first)
 """
@@ -23,7 +24,9 @@ def main(argv):
     if cmd in ("dust", "fetch-process"):
         from . import dust; dust.main()
     if cmd in ("meda", "fetch-process"):
-        from . import meda; meda.main()
+        from . import meda; meda.main(); meda.daily_feed()
+    if cmd in ("globe", "fetch-process"):
+        from . import globe; globe.main()
     if cmd in ("validate", "fetch-process"):
         from . import validate; rc = validate.main()
         if rc:

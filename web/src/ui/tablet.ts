@@ -7,6 +7,24 @@ import { walkSpeed } from '../core/routing';
 import { fixState, moveSuit, step, relative, fmtT } from '../core/crew';
 import { openEvidence } from './evidence';
 import { crewScenario } from './planner';
+import { routeLeg, PROFILES } from '../core/routing';
+import { timeToReserve_s, nearestShelter, fmtLmst, lmstMin } from '../core/survival';
+import { turnBack, shelters, survivalSettings, latestMeda } from './survivalui';
+
+let emergency: { area: string; path: XY[]; dist_m: number; time_s: number; terrain: boolean; o2need_pct: number } | null = null;
+function startEmergency() {
+  const area = state.area; const crew = crewFor(area); const A = crew.suits[0]; const from = A.lastFix?.xy ?? A.truePos;
+  const hab = shelters(area).find((q) => q.id === 'HAB')!;
+  let path: XY[] = [from, hab.xy], terrain = false;
+  if (area === 'jezero') { const r = routeLeg(app.b.terrain, from, hab.xy, PROFILES[0], state.assumptions.v0_kmh); if (r.ok) { path = r.path; terrain = true; } }
+  let d = 0; for (let i = 1; i < path.length; i++) d += dist(path[i - 1], path[i]);
+  const m = activePlan()!.metrics!; const t = d / (state.assumptions.v0_kmh / 3.6);
+  emergency = { area, path, dist_m: d, time_s: t, terrain, o2need_pct: (100 - m.o2Remaining_pct) * d / m.distance_m };
+  running = false; clearInterval(timer); timer = undefined;
+  log('decision', `EMERGENCY RETURN requested by ${A.id}: ${fmtM(d)} to habitat (${terrain ? 'terrain-checked route' : 'straight line, no terrain data'}), about ${Math.round(t / 60)} min.`, true);
+  $('#tbEmerg').textContent = 'Cancel emergency'; draw();
+}
+function cancelEmergency() { emergency = null; log('decision', 'Emergency return cancelled.', true); $('#tbEmerg').textContent = '⚠ Emergency return'; draw(); }
 
 let timer: number | undefined;
 let running = false;
@@ -35,13 +53,15 @@ export function initTablet() {
       <button id="tbStart" class="primary">▶ Start</button><button id="tbPause">⏸ Pause</button><button id="tbResume">⏵ Resume</button><button id="tbReset">↺ Reset</button>
       <label class="row">Speed <select id="tbSpeed"><option value="10">×10</option><option value="30" selected>×30</option><option value="60">×60</option><option value="120">×120</option></select></label>
       <label class="row">Tablet <select id="tbView"><option value="TAB-1">Astronaut A</option><option value="TAB-2">Astronaut B</option></select></label>
-      <button id="tbScen" aria-expanded="false" style="margin-left:auto">Crew scenarios ▴</button>
+      <button id="tbEmerg" class="danger" style="margin-left:auto">⚠ Emergency return</button>
+      <button id="tbScen" aria-expanded="false">Crew scenarios ▴</button>
     </div>`;
+  $('#tbEmerg').onclick = () => (emergency ? cancelEmergency() : startEmergency());
   $('#tbScen').onclick = () => { const r = $('#tbScenRow'); r.hidden = !r.hidden; $('#tbScen').setAttribute('aria-expanded', String(!r.hidden)); };
   $('#tbStart').onclick = () => { app.walk[state.area] = 0; running = true; log('event', 'Tablet walk started (simulated).', true); loop(); };
   $('#tbPause').onclick = () => { running = false; clearInterval(timer); timer = undefined; log('event', 'Tablet walk paused.', true); draw(); };
   $('#tbResume').onclick = () => { if (!running) { running = true; log('event', 'Tablet walk resumed.', true); loop(); } };
-  $('#tbReset').onclick = () => { running = false; clearInterval(timer); timer = undefined; app.walk[state.area] = 0; resetCrew(state.area); log('event', 'Tablet walk reset.', true); emit('crew'); };
+  $('#tbReset').onclick = () => { emergency = null; $('#tbEmerg').textContent = '⚠ Emergency return'; running = false; clearInterval(timer); timer = undefined; app.walk[state.area] = 0; resetCrew(state.area); log('event', 'Tablet walk reset.', true); emit('crew'); };
   ($('#tbSpeed') as HTMLSelectElement).onchange = (e) => { compress = +(e.target as HTMLSelectElement).value; };
   ($('#tbView') as HTMLSelectElement).onchange = (e) => { viewTablet = (e.target as HTMLSelectElement).value; draw(); };
   el.querySelectorAll<HTMLButtonElement>('[data-tcs]').forEach((b) => b.onclick = () => crewScenario(state.area, b.dataset.tcs!));
@@ -98,6 +118,8 @@ export function draw() {
   const drawPath = (from: number, to: number, col: string, w: number) => { g.beginPath(); let first = true; for (let d = from; d <= to; d += 2) { const [a, b] = P(pointAlong(T.pts, d)); first ? g.moveTo(a, b) : g.lineTo(a, b); first = false; } g.strokeStyle = col; g.lineWidth = w; g.lineCap = 'round'; g.stroke(); };
   drawPath(0, s, '#ffffff55', 6); drawPath(s, T.total, '#ff8a3d', 9);
   if (plan.impact.status === 'intersects') for (const c of plan.impact.crossings) { g.beginPath(); c.segment.forEach((p, i) => { const [a, b] = P(p); i ? g.lineTo(a, b) : g.moveTo(a, b); }); g.strokeStyle = '#ff3df0'; g.lineWidth = 12; g.stroke(); }
+  if (emergency && emergency.area === area) { g.beginPath(); emergency.path.forEach((p, i) => { const [a, b] = P(p); i ? g.lineTo(a, b) : g.moveTo(a, b); }); g.strokeStyle = '#ff5d5d'; g.lineWidth = 7; g.setLineDash([14, 8]); g.stroke(); g.setLineDash([]); }
+  const tbk = turnBack(area); if (tbk && tbk.xy && !emergency) { const [a, b] = P(tbk.xy); g.fillStyle = '#ffc94d'; g.beginPath(); g.arc(a, b, 12, 0, 7); g.fill(); g.save(); g.translate(a, b); g.rotate((hdg * Math.PI) / 180); g.fillStyle = '#1a1205'; g.font = 'bold 15px system-ui'; g.textAlign = 'center'; g.fillText('↩', 0, 5); g.restore(); }
   T.stopsAt.forEach((st, i) => { const [a, b] = P(pointAlong(T.pts, st.s)); g.fillStyle = st.required ? '#ff8a3d' : '#fff'; g.beginPath(); g.arc(a, b, 9, 0, 7); g.fill(); g.fillStyle = '#000'; g.font = 'bold 11px system-ui'; g.textAlign = 'center'; g.fillText(i === T.stopsAt.length - 1 ? 'H' : String(i + 1), a, b + 4); });
   // crew: suits (live vs last known) and tablets
   for (const su of crew.suits) {
@@ -125,7 +147,8 @@ export function draw() {
   if (nextCross && nextCross.startAlong_m - s < 150) warn = nextCross.startAlong_m > s ? `Changed ground in ${fmtM(nextCross.startAlong_m - s)}` : 'Crossing changed ground now';
   const turn = (() => { const h2 = bearing(pointAlong(T.pts, Math.min(T.total, s + 15)), pointAlong(T.pts, Math.min(T.total, s + 40))); const d = ((h2 - hdg + 540) % 360) - 180; return Math.abs(d) < 15 ? 'Continue straight' : `Bear ${d < 0 ? 'left' : 'right'} ${Math.abs(d).toFixed(0)}°`; })();
   ins.className = `instr ${warn ? 'warn' : ''}`;
-  ins.innerHTML = s >= T.total ? `✓ Back at habitat <small>Walk complete</small>` : `<span style="font-size:34px">${warn ? '⚠' : turn.startsWith('Bear left') ? '↖' : turn.startsWith('Bear right') ? '↗' : '⬆'}</span><div>${warn ? esc(warn) : turn}<small>${next ? `${fmtM(next.s - s)} to ${esc(next.label.split('(')[0])}` : ''} · ${fmtM(T.total - s)} remaining incl. return</small></div>`;
+  if (emergency && emergency.area === area) { ins.className = 'instr bad'; ins.innerHTML = `<span style="font-size:34px">⚠</span><div>Emergency return to habitat<small>${fmtM(emergency.dist_m)} · about ${Math.round(emergency.time_s / 60)} min · needs ~${emergency.o2need_pct.toFixed(0)}% O₂ · ${emergency.terrain ? 'follow the red dashed route' : 'straight line: no terrain data here'}</small></div>`; }
+  else ins.innerHTML = s >= T.total ? `✓ Back at habitat <small>Walk complete</small>` : `<span style="font-size:34px">${warn ? '⚠' : turn.startsWith('Bear left') ? '↖' : turn.startsWith('Bear right') ? '↗' : '⬆'}</span><div>${warn ? esc(warn) : turn}<small>${next ? `${fmtM(next.s - s)} to ${esc(next.label.split('(')[0])}` : ''} · ${fmtM(T.total - s)} remaining incl. return</small></div>`;
   $('#tbEv').innerHTML = nextCross ? `<button id="tbEvBtn">🔍 Inspect changed ground ahead</button>` : '';
   const eb = document.getElementById('tbEvBtn'); if (eb) eb.onclick = () => openEvidence(nextCross!.regionId, nextCross);
   side(T, s, crew, owner, tab);
@@ -139,6 +162,7 @@ function side(T: Track, s: number, crew: ReturnType<typeof crewFor>, owner: any,
   const live = fixState(crew, owner) === 'live';
   el.innerHTML = `${tabMsg}${live ? '' : `<div class="badbox">Own suit fix is not live: last fix ${fmtT(crew.t - owner.lastFix.t)} old.</div>`}
     <div class="res"><div><small>O₂ now</small><span class="big">${o2now.toFixed(0)}%</span></div><div><small>Battery now</small><span class="big">${bnow.toFixed(0)}%</span></div><div><small>To go</small><span class="big">${fmtM(T.total - s)}</span></div></div>
+    ${survStrip(T, s, crew, owner, o2now, bnow)}
     <div class="note">Back at the habitat with O₂ ${m.o2Remaining_pct.toFixed(0)}% and battery ${m.batteryRemaining_pct.toFixed(0)}% (keep ${state.assumptions.reservePct}%). ${p.mc ? `${p.mc.successPct.toFixed(0)}% of simulated missions made it back.` : ''}</div>
     <canvas class="overview" id="tbOv" width="320" height="266"></canvas>
     <h4 style="margin:10px 0 6px">Crew <span class="tag sim">simulated</span></h4><div class="crewList">${crew.suits.filter((q) => q.id !== owner.id).map((su) => {
@@ -158,6 +182,20 @@ function side(T: Track, s: number, crew: ReturnType<typeof crewFor>, owner: any,
   const [a, b] = Q(owner.lastFix.xy); g.fillStyle = '#5ec8ff'; g.beginPath(); g.arc(a, b, 5, 0, 7); g.fill();
   g.fillStyle = '#aaa'; g.font = '10px system-ui'; g.fillText('overview · north up', 6, 12);
 }
+
+function survStrip(T: Track, s: number, crew: ReturnType<typeof crewFor>, owner: any, o2now: number, bnow: number) {
+  const m = activePlan()!.metrics!; const R = state.assumptions.reservePct;
+  const o2t = timeToReserve_s(o2now, R, m, 'oxygen'), bt = timeToReserve_s(bnow, R, m, 'battery');
+  const tb = turnBack(state.area); const sh = owner.lastFix ? nearestShelter(owner.lastFix.xy, shelters(state.area)) : null;
+  const start = lmstMin(survivalSettings.startLmst)!; const now = start + crew.t / 60; const sun = state.area === 'jezero' ? lmstMin(latestMeda()?.sunset_lmst) : null;
+  const tbTxt = !tb ? '—' : tb.beyondRoute ? 'not needed on this route' : s < tb.along_m ? `in ${fmtM(tb.along_m - s)}` : '<b style="color:var(--warn)">passed: head home if use rises</b>';
+  return `<div class="survStrip">
+    <div><small>O₂ to reserve</small><b>${fmtHM(o2t)}</b></div><div><small>Battery to reserve</small><b>${fmtHM(bt)}</b></div>
+    <div><small>↩ Turn-back point</small><b>${tbTxt}</b></div><div><small>🏠 ${sh ? esc(sh.label) : 'Shelter'}</small><b>${sh ? fmtM(sh.dist_m) : '—'}</b></div>
+    <div><small>Local time (sim)</small><b>${fmtLmst(now)}</b></div><div><small>☀ Sunset${sun !== null ? ` (MEDA sol ${latestMeda()?.sol})` : ''}</small><b>${sun !== null ? `${fmtLmst(sun)} · in ${fmtHM((sun - now) * 60)}` : 'no data here'}</b></div>
+  </div>`;
+}
+const fmtHM = (sec: number) => !Number.isFinite(sec) ? '—' : sec <= 0 ? 'now' : `${Math.floor(sec / 3600)} h ${String(Math.round((sec % 3600) / 60)).padStart(2, '0')} min`;
 
 function dirWord(d: number) { const a = Math.abs(d); if (a < 22.5) return 'ahead'; if (a > 157.5) return 'behind you'; const side = d < 0 ? 'left' : 'right'; return a < 67.5 ? `ahead-${side}` : a < 112.5 ? `to your ${side}` : `behind-${side}`; }
 

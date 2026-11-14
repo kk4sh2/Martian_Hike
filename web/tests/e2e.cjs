@@ -34,8 +34,12 @@ const rec = (name, pass, detail) => { results.push({ name, pass, detail }); cons
   const after = await p.textContent('#cBrief');
   rec('Moving the landing pin updates the briefing', before !== after, `pin text changed: ${/Pin: ([^(]+)/.exec(after)?.[1]?.trim()}`);
   const wx = await p.textContent('#cWx');
-  if (/No MEDA observation packaged/.test(wx)) rec('Pin move changes distance to a dated MEDA observation; missing interval explicit', null, 'BLOCKED: no MEDA CSV/label could be retrieved; card states this explicitly instead of showing values');
-  else rec('Weather card shows distance', /Distance to pin/.test(wx), wx.slice(0, 120));
+  const dKm = (t) => (/Distance to pin(\d+\.\d) km/.exec(t.replace(/\s+/g, '')) || /Distance to pin\s*([\d.]+) km/.exec(t) || [])[1];
+  const box2 = await p.locator('.leaflet-marker-draggable').boundingBox();
+  await p.mouse.move(box2.x + box2.width / 2, box2.y + box2.height - 2); await p.mouse.down(); await p.mouse.move(box2.x - 200, box2.y + 40, { steps: 8 }); await p.mouse.up(); await p.waitForTimeout(400);
+  const wx2 = await p.textContent('#cWx');
+  rec('Pin move changes distance to a dated MEDA observation; missing interval explicit', !!dKm(wx) && !!dKm(wx2) && dKm(wx) !== dKm(wx2) && /Sol \d+ \(\d{4}-\d\d-\d\d\)/.test(wx) && /not reported|gap/.test(wx) && /not a forecast/.test(wx),
+    `distance ${dKm(wx)} km → ${dKm(wx2)} km after moving the pin; gaps shown as "not reported"/"gap"; NASA MEDA daily summary`);
 
   // 3. two routes with return legs
   const routes = await p.textContent('#cRoutes');
@@ -90,6 +94,21 @@ const rec = (name, pass, detail) => { results.push({ name, pass, detail }); cons
   rec('Sources tab is organised into sections with the moved details', tabs.length >= 6 && /held back for checking/.test(chg) && /PIA15680/.test(chg) && /Jezero Crater/.test(ds) && /Nili Patera/.test(ds), `tabs: ${tabs.join(', ')}`);
   await p.click('#modal .close');
 
+  // 6c. globe distance and survival tools
+  await p.click('#viewSel button[data-view=globe]'); await p.waitForTimeout(2500);
+  const gb = await p.locator('#globeCanvas').boundingBox();
+  await p.mouse.click(gb.x + gb.width * 0.45, gb.y + gb.height * 0.45); await p.waitForTimeout(200); await p.mouse.click(gb.x + gb.width * 0.55, gb.y + gb.height * 0.6); await p.waitForTimeout(500);
+  const gtxt = await p.textContent('#globeCard');
+  const gm = /Point A([\d.]+)° ([NS]), ([\d.]+)° ([EW])Point B([\d.]+)° ([NS]), ([\d.]+)° ([EW])Distance over the surface([\d.]+) km/.exec(gtxt.replace(/\s+(?=Point|Distance)/g, ''));
+  let gOk = false, gDet = gtxt.slice(0, 160);
+  if (gm) { const sg = (v, h) => (h === 'S' || h === 'W' ? -1 : 1) * +v; const la1 = sg(gm[1], gm[2]), lo1 = sg(gm[3], gm[4]), la2 = sg(gm[5], gm[6]), lo2 = sg(gm[7], gm[8]);
+    const r = Math.PI / 180; const a = Math.sin((la2 - la1) * r / 2) ** 2 + Math.cos(la1 * r) * Math.cos(la2 * r) * Math.sin((lo2 - lo1) * r / 2) ** 2; const ref = 2 * 3389.5 * Math.asin(Math.sqrt(a));
+    gOk = Math.abs(ref - +gm[9]) <= Math.max(1, ref * 0.002); gDet = `A ${la1},${lo1} B ${la2},${lo2}: shown ${gm[9]} km, independent check ${ref.toFixed(1)} km`; }
+  rec('3D globe: two picked points give the great-circle distance on Mars', gOk, gDet);
+  await p.click('#viewSel button[data-view=planner]'); await p.waitForTimeout(300);
+  const sv = await p.textContent('#cSurv');
+  rec('Survival check shows reserve margin, turn-back point, shelter, daylight and dust', /spare above the reserve|short of the reserve/.test(sv) && /Turn back by|No turn-back point/.test(sv) && /to shelter/.test(sv) && /sunset/.test(sv) && /Dust/.test(sv), sv.replace(/\s+/g, ' ').slice(0, 220));
+
   // 7. crew: drop tablet, move, interrupt link, restore
   await p.click('#areaSel button[data-area=jezero]'); await p.waitForTimeout(400);
   await p.click('#viewSel button[data-view=tablet]'); await p.click('#tbReset'); await p.waitForTimeout(200);
@@ -106,6 +125,10 @@ const rec = (name, pass, detail) => { results.push({ name, pass, detail }); cons
   rec('Empty/unconfirmed suit reports location with wearer uncertainty', /SUIT-S3 ● LIVE/.test(s4) && /Wearer unconfirmed/.test(s4), /SUIT-S3[^…]*/.exec(s4)?.[0]);
   await p.click('#tbPause');
 
+  await p.click('#tbEmerg'); await p.waitForTimeout(400);
+  const em = await p.textContent('#tbInstr'); const lg = await p.evaluate(() => JSON.parse(localStorage.getItem('marsdelta.mission.v1') || '{}').log?.slice(-3).map((x) => x.text).join(' | ') ?? '');
+  rec('Emergency return gives a route home with distance, time and oxygen needed', /Emergency return to habitat/.test(em) && /min/.test(em) && /O₂/.test(em), em.replace(/\s+/g, ' '));
+  await p.click('#tbEmerg');
   // 8. touch targets
   const small = await p.$$eval('#tabletView button', (bs) => bs.filter((b) => b.offsetParent && b.getBoundingClientRect().height < 44).map((b) => b.textContent.trim()));
   rec('Tablet touch targets ≥ 44 px', small.length === 0, small.length ? `small: ${small.join(', ')}` : 'all tablet buttons ≥ 44 px tall');

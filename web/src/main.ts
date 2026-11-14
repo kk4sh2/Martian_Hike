@@ -6,23 +6,30 @@ import { initPlanner, renderPlanner, plannerMap } from './ui/planner';
 import { initTablet, draw as drawTablet } from './ui/tablet';
 import { startDemo } from './ui/demo';
 import { openSources } from './ui/sources';
+import { initGlobe, showGlobe } from './ui/globe';
 import { $, openModal, esc } from './ui/dom';
 import type { AreaId } from './core/geo';
 
-let view: 'planner' | 'tablet' = 'planner';
-export function setView(v: 'planner' | 'tablet') {
-  view = v; $('#plannerView').hidden = v !== 'planner'; $('#tabletView').hidden = v !== 'tablet';
-  $('#plannerView').style.display = v === 'planner' ? 'flex' : 'none'; $('#tabletView').style.display = v === 'tablet' ? 'grid' : 'none';
+type View = 'planner' | 'tablet' | 'globe';
+let view: View = 'planner';
+export function setView(v: View) {
+  view = v;
+  for (const [id, disp] of [['plannerView', 'flex'], ['tabletView', 'grid'], ['globeView', 'block']] as const) {
+    const on = id === `${v}View`; $(`#${id}`).hidden = !on; $(`#${id}`).style.display = on ? disp : 'none';
+  }
   document.querySelectorAll<HTMLButtonElement>('#viewSel button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.view === v)));
-  if (v === 'planner') setTimeout(() => plannerMap().invalidateSize(), 50); else setTimeout(drawTablet, 30);
+  $('#panelBtn').hidden = v !== 'planner';
+  showGlobe(v === 'globe');
+  if (v === 'planner') setTimeout(() => plannerMap().invalidateSize(), 50); else if (v === 'tablet') setTimeout(drawTablet, 30);
 }
+(window as any).__setView = setView;
 
 function syncArea() { document.querySelectorAll<HTMLButtonElement>('#areaSel button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.area === state.area))); }
 
 async function boot() {
   $('#panel').innerHTML = '<div class="note">Loading evidence bundles…</div>';
   try { app.b = await loadAll(); } catch (e) { $('#panel').innerHTML = `<div class="badbox">Could not load data bundles: ${esc(e)}</div>`; return; }
-  initPlanner(); initTablet();
+  initPlanner(); initTablet(); initGlobe();
   onChange((_s, why) => { syncArea(); renderPlanner(why); if (view === 'tablet') drawTablet(); });
   document.querySelectorAll<HTMLButtonElement>('#areaSel button').forEach((b) => b.onclick = () => { state.area = b.dataset.area as AreaId; emit('area'); });
   document.querySelectorAll<HTMLButtonElement>('#viewSel button').forEach((b) => b.onclick = () => setView(b.dataset.view as any));
@@ -44,7 +51,7 @@ function panelToggle() {
     try { localStorage.setItem('marsdelta.panelHidden', hidden ? '1' : '0'); } catch { /* ignore */ }
     setTimeout(() => plannerMap().invalidateSize(), 60);
   };
-  btn.onclick = () => { hidden = !hidden; apply(); if (view !== 'planner') setView('planner'); };
+  btn.onclick = () => { hidden = !hidden; apply(); };
   apply();
 }
 
