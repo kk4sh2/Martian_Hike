@@ -71,10 +71,24 @@ const rec = (name, pass, detail) => { results.push({ name, pass, detail }); cons
   // 6. leakage
   await p.click('#areaSel button[data-area=jezero]'); await p.waitForTimeout(600);
   const jt = await panel(); const jl = await p.textContent('#legend');
-  rec('Nili Patera evidence never appears in Jezero', !/NP-0|PSP_00|PIA15680/.test(jt + jl) && /No repeat-imagery change analysis covers this mission area/.test(await p.textContent('#decision')), 'Jezero panel/legend free of Nili IDs; Jezero routes report "no change analysis"');
+  rec('Nili Patera evidence never appears in Jezero', !/NP-0|PSP_00|PIA15680/.test(jt + jl) && /no change analysis here/.test(await p.textContent('#cRoutes')) && (await p.textContent('#decision')).trim() === '', 'Jezero panel/legend free of Nili IDs; Jezero routes report "no change analysis here"; no alert banner');
   await p.click('#areaSel button[data-area=nili]'); await p.waitForTimeout(600);
   const nt = await panel();
   rec('Jezero surface weather never appears in Nili', /No surface weather is shown for Nili Patera/.test(nt) && !/MEDA station/.test(nt), 'Nili card states no surface weather');
+
+  // 6b. decluttered header, hide panel, organised sources
+  const hdr = await p.textContent('#top');
+  await p.click('#panelBtn'); await p.waitForTimeout(300);
+  const hiddenOk = await p.evaluate(() => getComputedStyle(document.querySelector('#panel')).display === 'none' && document.querySelector('#map').getBoundingClientRect().width > innerWidth - 5);
+  await p.click('#panelBtn'); await p.waitForTimeout(300);
+  const shownOk = await p.evaluate(() => getComputedStyle(document.querySelector('#panel')).display !== 'none');
+  rec('Side panel can be hidden and shown; header has no prototype label', hiddenOk && shownOk && !/prototype/i.test(hdr), `hidden: map full width ${hiddenOk}; shown again ${shownOk}; header "${hdr.replace(/\s+/g, ' ').trim()}"`);
+  await p.click('#sourcesBtn');
+  const tabs = await p.$$eval('[data-st]', (bs) => bs.map((b) => b.textContent));
+  await p.click('[data-st=change]'); const chg = await p.textContent('#srcBody');
+  await p.click('[data-st=datasets]'); const ds = await p.textContent('#srcBody');
+  rec('Sources tab is organised into sections with the moved details', tabs.length >= 6 && /held back for checking/.test(chg) && /PIA15680/.test(chg) && /Jezero Crater/.test(ds) && /Nili Patera/.test(ds), `tabs: ${tabs.join(', ')}`);
+  await p.click('#modal .close');
 
   // 7. crew: drop tablet, move, interrupt link, restore
   await p.click('#areaSel button[data-area=jezero]'); await p.waitForTimeout(400);

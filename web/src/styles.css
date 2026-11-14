@@ -103,3 +103,23 @@ table.cmp th { color: var(--muted); font-weight: 500; } table.cmp td.best { colo
 .evChip button { min-height: 56px; font-size: 16px; border: 2px solid var(--accent); background: #2a1b0f; }
 @media (max-width: 1000px) { aside#panel { width: 360px; } .evGrid { grid-template-columns: 1fr; } .brand small { display: none; } }
 @media (max-width: 760px) { #plannerView { flex-direction: column; } aside#panel { width: 100%; max-width: none; height: 45%; border-left: 0; border-top: 1px solid var(--line); } #mapWrap { height: 55%; flex: none; } .seg button small { display: none; } #tabletView { grid-template-columns: 1fr; } #tabletView .side { display: none; } }
+/* --- declutter pass --- */
+.seg button { justify-content: center; }
+.pill.off { color: var(--warn); border-color: var(--warn); }
+#plannerView.noPanel aside#panel { display: none; }
+.legend { width: auto; min-width: 0; padding: 4px; }
+.legend.open { width: 240px; padding: 6px 10px 8px; }
+.legendToggle { min-height: 44px; width: 100%; background: transparent; border: 0; text-align: left; font-weight: 600; font-size: 13px; padding: 6px 8px; }
+.legend label .tag { font-size: 10px; padding: 0 5px; margin-left: 4px; }
+table.cmp th.act, table.cmp td.act { color: var(--text); background: #262b35; }
+h4.sub { margin: 4px 0; font-size: 13px; color: var(--muted); font-weight: 600; }
+.mcRow { display: flex; gap: 8px; } .mcCell { flex: 1; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; gap: 3px; }
+.mcCell b.big { font-size: 26px; line-height: 1.1; } .mcCell b.good { color: var(--ok); } .mcCell b.mid { color: var(--warn); } .mcCell b.low { color: var(--bad); }
+.mcCell small { font-size: 11.5px; }
+details { margin-top: 8px; } details > summary { cursor: pointer; color: var(--obs); font-size: 13px; padding: 6px 0; min-height: 32px; }
+label.inp { justify-content: space-between; font-size: 13px; } label.inp input[type=number] { width: 90px; }
+.srcTabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+.srcTabs button[aria-selected="true"] { background: #2b3240; border-color: var(--accent); }
+.srcBody h3 { font-size: 14px; margin: 14px 0 6px; } .srcBody p, .srcBody li { font-size: 13.5px; line-height: 1.45; }
+.kv.wide { grid-template-columns: 120px 1fr; }
+@media (max-width: 900px) { header#top { gap: 8px; overflow-x: auto; } .brand { font-size: 16px; } #netState { display: none; } }

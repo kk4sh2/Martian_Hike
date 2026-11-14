@@ -5,7 +5,7 @@
 | Unit (vitest) | `cd web && npm test` | 8 / 8 pass |
 | Type check + build | `npm run build` | passes; service worker precaches 36 files (11.5 MB) |
 | Pipeline validation | `python3 -m marsdelta_pipeline validate` | 156 / 156 checks pass |
-| Acceptance (Playwright, built site) | `node web/tests/e2e.cjs` | 18 pass, 0 fail, 1 blocked |
+| Acceptance (Playwright, built site) | `node web/tests/e2e.cjs` | 20 pass, 0 fail, 1 blocked |
 
 Raw acceptance output: [e2e_results.json](e2e_results.json).
 
@@ -22,6 +22,8 @@ Raw acceptance output: [e2e_results.json](e2e_results.json).
 | 7 | Intersecting / clear / out-of-coverage routes differ correctly | PASS | Route A: "Inspect the highlighted crossing". Route B: "crosses no candidate". Route C: partly outside the analysis coverage. |
 | 8 | Nili evidence never appears in Jezero | PASS | No `NP-`, `PSP_` or `PIA15680` strings in the Jezero panel or legend. Jezero routes report "No repeat-imagery change analysis covers this mission area". |
 | 9 | Jezero weather never appears in Nili | PASS | The Nili card states that no surface weather is shown. |
+| 9b | Side panel hides and shows; header has no prototype label | PASS | With the panel hidden the map is full width, and it comes back on the second click. |
+| 9c | Sources tab organised into sections | PASS | Tabs: Overview, Datasets, Change analysis, Planning model, Weather & dust, Terrain, Crew tracking. The method details moved there from the main panel. |
 | 10 | Tablet left behind vs suit fix | PASS | "TAB-1 is not with its wearer … SUIT-A1's suit beacon, 39 m away." |
 | 11 | Suit link loss freezes the last fix and shows its age; restore resumes | PASS | SUIT-B2 shows LAST KNOWN with "last contact 1:33 ago", then LIVE. |
 | 12 | Unconfirmed spare suit | PASS | SUIT-S3 shows LIVE ±1.6 m and "Wearer unconfirmed". |
