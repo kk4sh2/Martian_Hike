@@ -1,0 +1,361 @@
+{
+  "pipeline_version": "0.3.0",
+  "sources": {
+    "derived_nili_change_evidence": {
+      "generated": "2026-11-14T09:15:59+00:00",
+      "local_path": "web/public/data/nili/change_evidence.json",
+      "purpose": "MarsDelta derived evidence record",
+      "sha256": "512042d029ceb7af67b021124e8039d229bfcfb022944aab21444a75a141d1b1"
+    },
+    "hirise_PSP_004339_1890_RED_JP2": {
+      "bytes": 874847939,
+      "credit": "NASA/JPL-Caltech/University of Arizona (HiRISE)",
+      "local_path": "data/raw/nili/PSP_004339_1890_RED.JP2",
+      "product_id": "PSP_004339_1890_RED",
+      "purpose": "Nili Patera before observation, map-projected RED JP2",
+      "resolved_url": "https://hirise-pds.lpl.arizona.edu/PDS/RDR/PSP/ORB_004300_004399/PSP_004339_1890/PSP_004339_1890_RED.JP2",
+      "retrieved": "2026-11-14T08:59:44+00:00",
+      "sha256": "c7251304697a24830b8ee9c35205ca63b179c73be996ec83b87657c8c683df45",
+      "url": "https://hirise-pds.lpl.arizona.edu/PDS/RDR/PSP/ORB_004300_004399/PSP_004339_1890/PSP_004339_1890_RED.JP2"
+    },
+    "hirise_PSP_004339_1890_RED_LBL": {
+      "bytes": 8222,
+      "credit": "NASA/JPL-Caltech/University of Arizona (HiRISE)",
+      "local_path": "data/raw/nili/PSP_004339_1890_RED.LBL",
+      "product_id": "PSP_004339_1890_RED",
+      "purpose": "Nili Patera before observation, map-projected RED LBL",
+      "resolved_url": "https://hirise-pds.lpl.arizona.edu/PDS/RDR/PSP/ORB_004300_004399/PSP_004339_1890/PSP_004339_1890_RED.LBL",
+      "retrieved": "2026-11-14T08:59:43+00:00",
+      "sha256": "9a1954dc1aaa128865aa3e1baaf8fd65bb77357fee2f36486cd51d19ee6c5ac5",
+      "url": "https://hirise-pds.lpl.arizona.edu/PDS/RDR/PSP/ORB_004300_004399/PSP_004339_1890/PSP_004339_1890_RED.LBL"
+    },
+    "hirise_PSP_005684_1890_RED_JP2": {
+      "bytes": 1304923855,
+      "credit": "NASA/JPL-Caltech/University of Arizona (HiRISE)",
+      "local_path": "data/raw/nili/PSP_005684_1890_RED.JP2",
+      "product_id": "PSP_005684_1890_RED",
+      "purpose": "Nili Patera after observation, map-projected RED JP2",
+      "resolved_url": "https://hirise-pds.lpl.arizona.edu/PDS/RDR/PSP/ORB_005600_005699/PSP_005684_1890/PSP_005684_1890_RED.JP2",
+      "retrieved": "2026-11-14T08:59:45+00:00",
+      "sha256": "917302c157b4ce2953edbb69355c6e4d9d0c219d33f486058e1173d47511b40a",
+      "url": "https://hirise-pds.lpl.arizona.edu/PDS/RDR/PSP/ORB_005600_005699/PSP_005684_1890/PSP_005684_1890_RED.JP2"
+    },
+    "hirise_PSP_005684_1890_RED_LBL": {
+      "bytes": 8145,
+      "credit": "NASA/JPL-Caltech/University of Arizona (HiRISE)",
+      "local_path": "data/raw/nili/PSP_005684_1890_RED.LBL",
+      "product_id": "PSP_005684_1890_RED",
+      "purpose": "Nili Patera after observation, map-projected RED LBL",
+      "resolved_url": "https://hirise-pds.lpl.arizona.edu/PDS/RDR/PSP/ORB_005600_005699/PSP_005684_1890/PSP_005684_1890_RED.LBL",
+      "retrieved": "2026-11-14T08:59:44+00:00",
+      "sha256": "a7177c0e984451af01b3a8c60e68217db970864f472034cc2be04a4a6a11d5b7",
+      "url": "https://hirise-pds.lpl.arizona.edu/PDS/RDR/PSP/ORB_005600_005699/PSP_005684_1890/PSP_005684_1890_RED.LBL"
+    },
+    "lmd_griddedcdod_MY28_v2-0.nc": {
+      "bytes": 46254288,
+      "credit": "Montabone et al. (2015, Icarus 251; 2020, JGR Planets) - LMD Mars dust climatology v2, CC BY-SA 3.0. Gridded (observation-only) maps.",
+      "local_path": "data/raw/dust/griddedcdod_MY28_v2-0.nc",
+      "product_id": "griddedcdod_MY28_v2-0.nc",
+      "purpose": "regional dust context for nili",
+      "resolved_url": "https://www-mars.lmd.jussieu.fr/mars/dust_climatology/dataset_v2/griddedcdod_MY28_v2-0.nc",
+      "retrieved": "2026-11-14T09:12:34+00:00",
+      "sha256": "7aa20d7c385668fb2580752a1dfac11f9b95e42432b0b8b53fe9e9a9dbf8d31b",
+      "url": "https://www-mars.lmd.jussieu.fr/mars/dust_climatology/dataset_v2/griddedcdod_MY28_v2-0.nc"
+    },
+    "lmd_griddedcdod_MY36_v2-5-1.nc": {
+      "bytes": 231306068,
+      "credit": "Montabone et al. (2015, Icarus 251; 2020, JGR Planets) - LMD Mars dust climatology v2, CC BY-SA 3.0. Gridded (observation-only) maps.",
+      "local_path": "data/raw/dust/griddedcdod_MY36_v2-5-1.nc",
+      "product_id": "griddedcdod_MY36_v2-5-1.nc",
+      "purpose": "regional dust context for jezero",
+      "resolved_url": "https://www-mars.lmd.jussieu.fr/mars/dust_climatology/dataset_v2/griddedcdod_MY36_v2-5-1.nc",
+      "retrieved": "2026-11-14T09:12:33+00:00",
+      "sha256": "f1d7a2234d12fbc9c3efb685d3e81afeb943730259187f7f273910e109666604",
+      "url": "https://www-mars.lmd.jussieu.fr/mars/dust_climatology/dataset_v2/griddedcdod_MY36_v2-5-1.nc"
+    },
+    "m2020_raw_ZL0_0414_0703684150_456EBY_N0220788ZCAM08428_1100LMJ_image": {
+      "bytes": 70326,
+      "credit": "NASA/JPL-Caltech/ASU",
+      "local_path": "web/public/data/jezero/photos/ZL0_0414_0703684150_456EBY_N0220788ZCAM08428_1100LMJ.jpg",
+      "product_id": "ZL0_0414_0703684150_456EBY_N0220788ZCAM08428_1100LMJ",
+      "purpose": "ground photo (1200 px browse)",
+      "resolved_url": "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/00414/ids/edr/browse/zcam/ZL0_0414_0703684150_456EBY_N0220788ZCAM08428_1100LMJ01_1200.jpg",
+      "retrieved": "2026-11-14T09:09:57+00:00",
+      "sha256": "437b519ed6326b24761a35a89d210ccdfeca0e40b31546604304254a7d2a2965",
+      "url": "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/00414/ids/edr/browse/zcam/ZL0_0414_0703684150_456EBY_N0220788ZCAM08428_1100LMJ01_1200.jpg"
+    },
+    "m2020_raw_ZL0_0414_0703684150_456EBY_N0220788ZCAM08428_1100LMJ_record": {
+      "bytes": 2422,
+      "credit": "NASA/JPL-Caltech/ASU",
+      "local_path": "data/raw/jezero/photos/ZL0_0414_0703684150_456EBY_N0220788ZCAM08428_1100LMJ.json",
+      "product_id": "ZL0_0414_0703684150_456EBY_N0220788ZCAM08428_1100LMJ",
+      "purpose": "raw image mission record",
+      "resolved_url": "https://mars.nasa.gov/rss/api/?feed=raw_images&category=mars2020&feedtype=json&id=ZL0_0414_0703684150_456EBY_N0220788ZCAM08428_1100LMJ",
+      "retrieved": "2026-11-14T09:09:56+00:00",
+      "sha256": "69e9556602b4b9771ed308fcef0c6e2526dc6c5dbb228af496189f655e9ff657",
+      "url": "https://mars.nasa.gov/rss/api/?feed=raw_images&category=mars2020&feedtype=json&id=ZL0_0414_0703684150_456EBY_N0220788ZCAM08428_1100LMJ"
+    },
+    "m2020_raw_ZL0_0414_0703684168_488EBY_N0220788ZCAM08428_1100LMJ_image": {
+      "bytes": 81269,
+      "credit": "NASA/JPL-Caltech/ASU",
+      "local_path": "web/public/data/jezero/photos/ZL0_0414_0703684168_488EBY_N0220788ZCAM08428_1100LMJ.jpg",
+      "product_id": "ZL0_0414_0703684168_488EBY_N0220788ZCAM08428_1100LMJ",
+      "purpose": "ground photo (1200 px browse)",
+      "resolved_url": "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/00414/ids/edr/browse/zcam/ZL0_0414_0703684168_488EBY_N0220788ZCAM08428_1100LMJ01_1200.jpg",
+      "retrieved": "2026-11-14T09:09:58+00:00",
+      "sha256": "78867753541b279478cb4dce26405e704e9e219e0b4110d320715c5d8a22e67c",
+      "url": "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/00414/ids/edr/browse/zcam/ZL0_0414_0703684168_488EBY_N0220788ZCAM08428_1100LMJ01_1200.jpg"
+    },
+    "m2020_raw_ZL0_0414_0703684168_488EBY_N0220788ZCAM08428_1100LMJ_record": {
+      "bytes": 2420,
+      "credit": "NASA/JPL-Caltech/ASU",
+      "local_path": "data/raw/jezero/photos/ZL0_0414_0703684168_488EBY_N0220788ZCAM08428_1100LMJ.json",
+      "product_id": "ZL0_0414_0703684168_488EBY_N0220788ZCAM08428_1100LMJ",
+      "purpose": "raw image mission record",
+      "resolved_url": "https://mars.nasa.gov/rss/api/?feed=raw_images&category=mars2020&feedtype=json&id=ZL0_0414_0703684168_488EBY_N0220788ZCAM08428_1100LMJ",
+      "retrieved": "2026-11-14T09:09:57+00:00",
+      "sha256": "5256b99893f76e1b183772ae25178b695dd44ba68a45035a9273ae2b4090145f",
+      "url": "https://mars.nasa.gov/rss/api/?feed=raw_images&category=mars2020&feedtype=json&id=ZL0_0414_0703684168_488EBY_N0220788ZCAM08428_1100LMJ"
+    },
+    "m2020_raw_ZL0_0420_0704236463_331ECM_N0232872ZCAM08439_110085J_image": {
+      "bytes": 155151,
+      "credit": "NASA/JPL-Caltech/ASU",
+      "local_path": "web/public/data/jezero/photos/ZL0_0420_0704236463_331ECM_N0232872ZCAM08439_110085J.jpg",
+      "product_id": "ZL0_0420_0704236463_331ECM_N0232872ZCAM08439_110085J",
+      "purpose": "ground photo (1200 px browse)",
+      "resolved_url": "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/00420/ids/edr/browse/zcam/ZL0_0420_0704236463_331ECM_N0232872ZCAM08439_110085J01_1200.jpg",
+      "retrieved": "2026-11-14T09:09:58+00:00",
+      "sha256": "737208fc0e717c10f415a74123cbcfe3e4368ef8babcb1119e66fdd90d25d3ac",
+      "url": "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/00420/ids/edr/browse/zcam/ZL0_0420_0704236463_331ECM_N0232872ZCAM08439_110085J01_1200.jpg"
+    },
+    "m2020_raw_ZL0_0420_0704236463_331ECM_N0232872ZCAM08439_110085J_record": {
+      "bytes": 2419,
+      "credit": "NASA/JPL-Caltech/ASU",
+      "local_path": "data/raw/jezero/photos/ZL0_0420_0704236463_331ECM_N0232872ZCAM08439_110085J.json",
+      "product_id": "ZL0_0420_0704236463_331ECM_N0232872ZCAM08439_110085J",
+      "purpose": "raw image mission record",
+      "resolved_url": "https://mars.nasa.gov/rss/api/?feed=raw_images&category=mars2020&feedtype=json&id=ZL0_0420_0704236463_331ECM_N0232872ZCAM08439_110085J",
+      "retrieved": "2026-11-14T09:09:58+00:00",
+      "sha256": "e4b8d00534d80d1be420667baa0fc32ae1047684d21e932d1da71ba52cdb0dd3",
+      "url": "https://mars.nasa.gov/rss/api/?feed=raw_images&category=mars2020&feedtype=json&id=ZL0_0420_0704236463_331ECM_N0232872ZCAM08439_110085J"
+    },
+    "m2020_raw_ZL1_0464_0708130241_144ECM_N0260630ZCAM03381_0340LMJ_image": {
+      "bytes": 134175,
+      "credit": "NASA/JPL-Caltech/ASU",
+      "local_path": "web/public/data/jezero/photos/ZL1_0464_0708130241_144ECM_N0260630ZCAM03381_0340LMJ.jpg",
+      "product_id": "ZL1_0464_0708130241_144ECM_N0260630ZCAM03381_0340LMJ",
+      "purpose": "ground photo (1200 px browse)",
+      "resolved_url": "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/00464/ids/edr/browse/zcam/ZL1_0464_0708130241_144ECM_N0260630ZCAM03381_0340LMJ01_1200.jpg",
+      "retrieved": "2026-11-14T09:09:59+00:00",
+      "sha256": "84ce90d2d483451b5a6dc77ae1863911958306d5513e2790cfc904ba7c5d02b4",
+      "url": "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/00464/ids/edr/browse/zcam/ZL1_0464_0708130241_144ECM_N0260630ZCAM03381_0340LMJ01_1200.jpg"
+    },
+    "m2020_raw_ZL1_0464_0708130241_144ECM_N0260630ZCAM03381_0340LMJ_record": {
+      "bytes": 2410,
+      "credit": "NASA/JPL-Caltech/ASU",
+      "local_path": "data/raw/jezero/photos/ZL1_0464_0708130241_144ECM_N0260630ZCAM03381_0340LMJ.json",
+      "product_id": "ZL1_0464_0708130241_144ECM_N0260630ZCAM03381_0340LMJ",
+      "purpose": "raw image mission record",
+      "resolved_url": "https://mars.nasa.gov/rss/api/?feed=raw_images&category=mars2020&feedtype=json&id=ZL1_0464_0708130241_144ECM_N0260630ZCAM03381_0340LMJ",
+      "retrieved": "2026-11-14T09:09:59+00:00",
+      "sha256": "b7f56a7efbef62bd6c67f69b28d7ea380b6a7e729073bb0ed43b83cc62970877",
+      "url": "https://mars.nasa.gov/rss/api/?feed=raw_images&category=mars2020&feedtype=json&id=ZL1_0464_0708130241_144ECM_N0260630ZCAM03381_0340LMJ"
+    },
+    "m2020_raw_ZL5_0464_0708122319_318ECM_N0260630ZCAM03377_1100LMJ_image": {
+      "bytes": 151848,
+      "credit": "NASA/JPL-Caltech/ASU",
+      "local_path": "web/public/data/jezero/photos/ZL5_0464_0708122319_318ECM_N0260630ZCAM03377_1100LMJ.jpg",
+      "product_id": "ZL5_0464_0708122319_318ECM_N0260630ZCAM03377_1100LMJ",
+      "purpose": "ground photo (1200 px browse)",
+      "resolved_url": "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/00464/ids/edr/browse/zcam/ZL5_0464_0708122319_318ECM_N0260630ZCAM03377_1100LMJ01_1200.jpg",
+      "retrieved": "2026-11-14T09:10:00+00:00",
+      "sha256": "c11bfc6ff522724a12ed4fee61dd2bb1452ed81e6ed51828f7ef2d11225e6b30",
+      "url": "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/00464/ids/edr/browse/zcam/ZL5_0464_0708122319_318ECM_N0260630ZCAM03377_1100LMJ01_1200.jpg"
+    },
+    "m2020_raw_ZL5_0464_0708122319_318ECM_N0260630ZCAM03377_1100LMJ_record": {
+      "bytes": 2418,
+      "credit": "NASA/JPL-Caltech/ASU",
+      "local_path": "data/raw/jezero/photos/ZL5_0464_0708122319_318ECM_N0260630ZCAM03377_1100LMJ.json",
+      "product_id": "ZL5_0464_0708122319_318ECM_N0260630ZCAM03377_1100LMJ",
+      "purpose": "raw image mission record",
+      "resolved_url": "https://mars.nasa.gov/rss/api/?feed=raw_images&category=mars2020&feedtype=json&id=ZL5_0464_0708122319_318ECM_N0260630ZCAM03377_1100LMJ",
+      "retrieved": "2026-11-14T09:09:59+00:00",
+      "sha256": "d17e02c3ea109b0acde759097fa4505b4e92aa85677d9469c5189f47cfd01a5b",
+      "url": "https://mars.nasa.gov/rss/api/?feed=raw_images&category=mars2020&feedtype=json&id=ZL5_0464_0708122319_318ECM_N0260630ZCAM03377_1100LMJ"
+    },
+    "nasa_PIA12857.jpg": {
+      "bytes": 82613,
+      "credit": "NASA/JPL-Caltech/University of Arizona",
+      "local_path": "data/raw/nasa/PIA12857.jpg",
+      "product_id": "PIA12857",
+      "purpose": "NASA published evidence (https://science.nasa.gov/photojournal/)",
+      "resolved_url": "https://assets.science.nasa.gov/content/dam/science/psd/photojournal/pia/pia12/pia12857/PIA12857.jpg",
+      "retrieved": "2026-11-14T08:59:47+00:00",
+      "sha256": "ae0f0f3835321d8563c55eb197c6aa9f650f3b4bce63cfc59de27971428d4a4a",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/photojournal/pia/pia12/pia12857/PIA12857.jpg"
+    },
+    "nasa_PIA12860.jpg": {
+      "bytes": 97853,
+      "credit": "NASA/JPL-Caltech/University of Arizona/International Research School of Planetary Sciences",
+      "local_path": "data/raw/nasa/PIA12860.jpg",
+      "product_id": "PIA12860",
+      "purpose": "NASA published evidence (https://science.nasa.gov/photojournal/changes-in-ripples-on-martian-dunes-in-nili-patera/)",
+      "resolved_url": "https://assets.science.nasa.gov/content/dam/science/psd/photojournal/pia/pia12/pia12860/PIA12860.jpg",
+      "retrieved": "2026-11-14T08:59:46+00:00",
+      "sha256": "914129403180b027a111b36873f3aba3694c2783317244b8b5075892d7abc58f",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/photojournal/pia/pia12/pia12860/PIA12860.jpg"
+    },
+    "nasa_PIA12860.tif": {
+      "bytes": 1443834,
+      "credit": "NASA/JPL-Caltech/University of Arizona/International Research School of Planetary Sciences",
+      "local_path": "data/raw/nasa/PIA12860.tif",
+      "product_id": "PIA12860",
+      "purpose": "NASA published evidence (https://science.nasa.gov/photojournal/changes-in-ripples-on-martian-dunes-in-nili-patera/)",
+      "resolved_url": "https://assets.science.nasa.gov/content/dam/science/psd/photojournal/pia/pia12/pia12860/PIA12860.tif",
+      "retrieved": "2026-11-14T08:59:46+00:00",
+      "sha256": "0a2310c10e91b74f6cbc38135d3e976eb31c2a8fdd9ed215827134cbf5840c30",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/photojournal/pia/pia12/pia12860/PIA12860.tif"
+    },
+    "nasa_PIA15680.gif": {
+      "bytes": 174545,
+      "credit": "NASA/JPL-Caltech/Univ. of Arizona/JHU-APL",
+      "local_path": "data/raw/nasa/PIA15680.gif",
+      "product_id": "PIA15680",
+      "purpose": "NASA published evidence (https://science.nasa.gov/photojournal/ripple-movement-on-sand-dune-in-nili-patera-mars/)",
+      "resolved_url": "https://assets.science.nasa.gov/content/dam/science/psd/photojournal/pia/pia15/pia15680/PIA15680.gif",
+      "retrieved": "2026-11-14T08:59:46+00:00",
+      "sha256": "5643f50414b59f525682a3cf4fcad83e38ad247a265f1e5209958a00d481cada",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/photojournal/pia/pia15/pia15680/PIA15680.gif"
+    },
+    "nasa_PIA15680.jpg": {
+      "bytes": 50090,
+      "credit": "NASA/JPL-Caltech/Univ. of Arizona/JHU-APL",
+      "local_path": "data/raw/nasa/PIA15680.jpg",
+      "product_id": "PIA15680",
+      "purpose": "NASA published evidence (https://science.nasa.gov/photojournal/ripple-movement-on-sand-dune-in-nili-patera-mars/)",
+      "resolved_url": "https://assets.science.nasa.gov/content/dam/science/psd/photojournal/pia/pia15/pia15680/PIA15680.jpg",
+      "retrieved": "2026-11-14T08:59:46+00:00",
+      "sha256": "72a412160abf59b31f4296e7b7bf5598604a309a20b8fcf3cab77ba4c490548d",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/photojournal/pia/pia15/pia15680/PIA15680.jpg"
+    },
+    "nasa_PIA15680.tif": {
+      "bytes": 206176,
+      "credit": "NASA/JPL-Caltech/Univ. of Arizona/JHU-APL",
+      "local_path": "data/raw/nasa/PIA15680.tif",
+      "product_id": "PIA15680",
+      "purpose": "NASA published evidence (https://science.nasa.gov/photojournal/ripple-movement-on-sand-dune-in-nili-patera-mars/)",
+      "resolved_url": "https://assets.science.nasa.gov/content/dam/science/psd/photojournal/pia/pia15/pia15680/PIA15680.tif",
+      "retrieved": "2026-11-14T08:59:46+00:00",
+      "sha256": "9a315802586505033b6bceab91dd375abf43902efa018a7b7ba8f1a40793fb12",
+      "url": "https://assets.science.nasa.gov/content/dam/science/psd/photojournal/pia/pia15/pia15680/PIA15680.tif"
+    },
+    "nasa_m20_traverse": {
+      "bytes": 1723218,
+      "credit": "NASA/JPL-Caltech",
+      "local_path": "data/raw/jezero/M20_traverse.json",
+      "product_id": "M20_traverse (MMGIS)",
+      "purpose": "Perseverance traverse path",
+      "resolved_url": "https://mars.nasa.gov/mmgis-maps/M20/Layers/json/M20_traverse.json",
+      "retrieved": "2026-11-14T09:07:34+00:00",
+      "sha256": "6ddd0ece913d75b45d105946082f95ed84e68f4718b68d32a4421dc30877e7e6",
+      "url": "https://mars.nasa.gov/mmgis-maps/M20/Layers/json/M20_traverse.json"
+    },
+    "nasa_m20_waypoints": {
+      "bytes": 603126,
+      "credit": "NASA/JPL-Caltech",
+      "local_path": "data/raw/jezero/M20_waypoints.json",
+      "product_id": "M20_waypoints (MMGIS)",
+      "purpose": "Perseverance localized waypoints",
+      "resolved_url": "https://mars.nasa.gov/mmgis-maps/M20/Layers/json/M20_waypoints.json",
+      "retrieved": "2026-11-14T09:07:34+00:00",
+      "sha256": "bd143ee69241229926abd373e6305b8bbb326d6b5a7b4a8d6935262696f93dc4",
+      "url": "https://mars.nasa.gov/mmgis-maps/M20/Layers/json/M20_waypoints.json"
+    },
+    "usgs_JEZ_hirise_soc_006_DTM_MOLAtopography_DeltaGeoid_1m_Eqc_latTs0_lon0_blend40.tif": {
+      "access": "HTTP range reads (GDAL /vsicurl) of the corridor only",
+      "corridor_local_m": [
+        -700.0,
+        -500.0,
+        600.0,
+        700.0
+      ],
+      "credit": "USGS Astrogeology / NASA / JPL-Caltech / University of Arizona (HiRISE); Fergason et al. 2020",
+      "product_id": "JEZ_hirise_soc_006_DTM_MOLAtopography_DeltaGeoid_1m_Eqc_latTs0_lon0_blend40.tif",
+      "purpose": "Jezero demonstration corridor terrain/imagery",
+      "resolved_url": "https://asc-pds-services.s3.us-west-2.amazonaws.com/mosaic/mars2020_trn/HiRISE/JEZ_hirise_soc_006_DTM_MOLAtopography_DeltaGeoid_1m_Eqc_latTs0_lon0_blend40.tif",
+      "retrieved": "2026-11-14T09:06:09+00:00",
+      "source_raster": {
+        "bounds": [
+          4577366.0,
+          1085130.0,
+          4598766.0,
+          1106618.0
+        ],
+        "crs_wkt": "PROJCS[\"Equirectangular Mars 2000 Sphere IAU\",GEOGCS[\"D_Mars_2000_Sphere\",DATUM[\"Mars_2000_(Sphere)\",SPHEROID[\"Mars_2000_Sphere_IAU\",3396190,0],AUTHORITY[\"ESRI\",\"106971\"]],PRIMEM[\"Reference_Meridian\",0],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]]],PROJECTION[\"Equirectangular\"],PARAMETER[\"standard_parallel_1\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]",
+        "dtype": "float32",
+        "height": 21488,
+        "nodata": -3.4028226550889045e+38,
+        "res": [
+          1.0,
+          1.0
+        ],
+        "width": 21400,
+        "window": [
+          10034,
+          12131,
+          1410,
+          1240
+        ]
+      },
+      "url": "https://planetarymaps.usgs.gov/mosaic/mars2020_trn/HiRISE/JEZ_hirise_soc_006_DTM_MOLAtopography_DeltaGeoid_1m_Eqc_latTs0_lon0_blend40.tif"
+    },
+    "usgs_JEZ_hirise_soc_006_orthoMosaic_25cm_Eqc_latTs0_lon0_first.tif": {
+      "access": "HTTP range reads (GDAL /vsicurl) of the corridor only",
+      "corridor_local_m": [
+        -700.0,
+        -500.0,
+        600.0,
+        700.0
+      ],
+      "credit": "USGS Astrogeology / NASA / JPL-Caltech / University of Arizona (HiRISE); Fergason et al. 2020",
+      "product_id": "JEZ_hirise_soc_006_orthoMosaic_25cm_Eqc_latTs0_lon0_first.tif",
+      "purpose": "Jezero demonstration corridor terrain/imagery",
+      "resolved_url": "https://asc-pds-services.s3.us-west-2.amazonaws.com/mosaic/mars2020_trn/HiRISE/JEZ_hirise_soc_006_orthoMosaic_25cm_Eqc_latTs0_lon0_first.tif",
+      "retrieved": "2026-11-14T09:07:33+00:00",
+      "source_raster": {
+        "bounds": [
+          4577366.0,
+          1085130.0,
+          4598766.0,
+          1106618.0
+        ],
+        "crs_wkt": "PROJCS[\"Equirectangular Mars 2000 Sphere IAU\",GEOGCS[\"D_Mars_2000_Sphere\",DATUM[\"Mars_2000_(Sphere)\",SPHEROID[\"Mars_2000_Sphere_IAU\",3396190,0],AUTHORITY[\"ESRI\",\"106971\"]],PRIMEM[\"Reference_Meridian\",0],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]]],PROJECTION[\"Equirectangular\"],PARAMETER[\"standard_parallel_1\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]",
+        "dtype": "uint8",
+        "height": 85952,
+        "nodata": 0.0,
+        "res": [
+          0.25,
+          0.25
+        ],
+        "width": 85600,
+        "window": [
+          40196,
+          48586,
+          5522,
+          4840
+        ]
+      },
+      "url": "https://planetarymaps.usgs.gov/mosaic/mars2020_trn/HiRISE/JEZ_hirise_soc_006_orthoMosaic_25cm_Eqc_latTs0_lon0_first.tif"
+    },
+    "usgs_sim3464_database": {
+      "credit": "Sun, V., and Stack, K., 2020, Geologic map of Jezero crater and the Nili Planum region, Mars: USGS SIM 3464, https://doi.org/10.3133/sim3464",
+      "local_path": "data/raw/jezero/geology/sim3464_database.zip",
+      "product_id": "sim3464_database.zip",
+      "purpose": "Geologic context (1:75,000)",
+      "retrieved": "2026-11-14T09:07:35+00:00",
+      "sha256": "a88bd53a5573743cc4a20036c10e585106d08a433ad2f34af269e9cea1529f87",
+      "url": "https://pubs.usgs.gov/sim/3464/sim3464_database.zip"
+    }
+  },
+  "updated": "2026-11-14T09:15:59+00:00"
+}

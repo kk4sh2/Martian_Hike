@@ -1,0 +1,76 @@
+{
+  "area": "jezero",
+  "crs_proj4": "+proj=eqc +lat_ts=18.4525 +lat_0=0 +lon_0=77.405 +x_0=0 +y_0=-1093766.356048808 +R=3396190.0 +units=m +no_defs",
+  "corridor_local_m": [
+    -700.0,
+    -500.0,
+    600.0,
+    700.0
+  ],
+  "dtm": {
+    "product": "JEZ_hirise_soc_006_DTM_MOLAtopography_DeltaGeoid_1m_Eqc_latTs0_lon0_blend40.tif",
+    "native_res_m": [
+      1.0,
+      1.0
+    ],
+    "native_nodata": -3.4028226550889045e+38,
+    "vertical_reference": "Mars areoid (geoid), metres - 'MOLAtopography_DeltaGeoid' product",
+    "resampled_res_m": 1.0,
+    "elev_min_m": -2553.814208984375,
+    "elev_max_m": -2456.639404296875,
+    "nodata_fraction": 0.0,
+    "slope_p50_deg": 4.782301425933838,
+    "slope_p95_deg": 19.81260108947754,
+    "slope_max_deg": 71.02497863769531,
+    "quality_note": "HiRISE stereo DTM mosaic produced for Mars 2020 TRN (Fergason et al. 2020). 1 m posting; true resolution of stereo DTMs is ~3x the posting, so slopes are representative of ~3 m baselines and do not resolve individual rocks. Native grid is equirectangular with true scale at the equator; MarsDelta reprojects it to a local projection before computing distances and slopes."
+  },
+  "ortho": {
+    "product": "JEZ_hirise_soc_006_orthoMosaic_25cm_Eqc_latTs0_lon0_first.tif",
+    "native_res_m": [
+      0.25,
+      0.25
+    ],
+    "resampled_res_m": 0.5
+  },
+  "grid": {
+    "file": "elevation_2m.u16",
+    "res_m": 2.0,
+    "width": 650,
+    "height": 600,
+    "origin_top_left_local_m": [
+      -700.0,
+      700.0
+    ],
+    "encoding": "uint16 LE, (elev_m + 3000) * 10, 0 = no data"
+  },
+  "images": {
+    "ortho": "ortho.jpg",
+    "hillshade": "hillshade.jpg",
+    "slope_overlay": "slope_overlay.png",
+    "bounds_local_m": [
+      -700.0,
+      -500.0,
+      600.0,
+      700.0
+    ]
+  },
+  "slope_classes_deg": [
+    [
+      5,
+      10
+    ],
+    [
+      10,
+      15
+    ],
+    [
+      15,
+      25
+    ],
+    [
+      25,
+      90
+    ]
+  ],
+  "generated": "2026-11-14T09:07:33+00:00"
+}

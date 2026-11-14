@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1115" />
+  <title>MarsDelta Mission Planner</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+</head>
+<body>
+  <header id="top">
+    <div class="brand"><span class="logo">Δ</span> MarsDelta <small>mission planner · prototype</small></div>
+    <div class="seg" id="areaSel" role="tablist" aria-label="Mission area">
+      <button data-area="jezero" role="tab">A · Jezero Crater<small>science walk</small></button>
+      <button data-area="nili" role="tab">B · Nili Patera<small>change investigation</small></button>
+    </div>
+    <div class="seg" id="viewSel" role="tablist" aria-label="View">
+      <button data-view="planner" role="tab">Planner</button>
+      <button data-view="tablet" role="tab">Tablet</button>
+    </div>
+    <div class="topActions">
+      <button id="demoBtn" class="primary">▶ Guided demo</button>
+      <button id="sourcesBtn">Sources</button>
+      <span id="netState" class="pill" title="Offline readiness"></span>
+    </div>
+  </header>
+  <main id="app">
+    <section id="plannerView">
+      <div id="mapWrap"><div id="map"></div><div id="decision" class="decision"></div><div id="legend" class="legend"></div><div id="coords" class="coords"></div></div>
+      <aside id="panel"></aside>
+    </section>
+    <section id="tabletView" hidden></section>
+  </main>
+  <div id="modal" class="modal" hidden><div class="modalBox"><button class="close" aria-label="Close">✕</button><div class="modalBody"></div></div></div>
+  <div id="demo" class="demoBar" hidden></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+{
+  "generated": "2026-11-14T09:10:00+00:00",
+  "photos": [
+    {
+      "product_id": "ZL0_0414_0703684150_456EBY_N0220788ZCAM08428_1100LMJ",
+      "stop": "habitat",
+      "selection_note": "Distant layered butte seen from the crater floor",
+      "camera": "MCZ_LEFT",
+      "sol": 414,
+      "date_utc": "2022-04-19T23:55:47.821",
+      "lmst": "Sol-00414M10:05:41.914",
+      "credit": "NASA/JPL-Caltech/ASU",
+      "source_page": "https://mars.nasa.gov/mars2020/multimedia/raw-images/ZL0_0414_0703684150_456EBY_N0220788ZCAM08428_1100LMJ",
+      "record_url": "https://mars.nasa.gov/rss/api/?feed=raw_images&category=mars2020&feedtype=json&id=ZL0_0414_0703684150_456EBY_N0220788ZCAM08428_1100LMJ",
+      "image_url": "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/00414/ids/edr/browse/zcam/ZL0_0414_0703684150_456EBY_N0220788ZCAM08428_1100LMJ01_1200.jpg",
+      "local_file": "photos/ZL0_0414_0703684150_456EBY_N0220788ZCAM08428_1100LMJ.jpg",
+      "caption": "NASA's Mars Perseverance rover acquired this image using its Left Mastcam-Z camera. Mastcam-Z is a pair of cameras located high on the rover's mast.\n\nThis image was acquired on April 19, 2022 (Sol 414) at the local mean solar time of 10:05:41.",
+      "mission_record": {
+        "site": 22,
+        "drive": 788,
+        "rmc": "22_788"
+      },
+      "camera_position": {
+        "lon": 77.40855229,
+        "lat": 18.45316104,
+        "x": 199.74,
+        "y": 39.18,
+        "elev_geoid_m": -2545.27,
+        "source": "NASA localized waypoint for this site/drive (rover origin; mast ~2 m above)"
+      },
+      "target_position": null,
+      "target_position_note": "Not available: the record has no range to the photographed object.",
+      "heading": {
+        "azimuth_deg": 174.0,
+        "from_attitude_quaternion_deg": 174.0,
+        "from_yaw_plus_mastAz_deg": 174.0,
+        "agreement_deg": 0.0,
+        "hfov_deg": 6.3,
+        "elevation_deg": 4.2,
+        "status": "derived"
+      }
+    },
+    {
+      "product_id": "ZL0_0414_0703684168_488EBY_N0220788ZCAM08428_1100LMJ",
+      "stop": "habitat",
+      "selection_note": "Distant butte profile from the crater floor",
+      "camera": "MCZ_LEFT",
+      "sol": 414,
+      "date_utc": "2022-04-19T23:56:00.821",
+      "lmst": "Sol-00414M10:05:54.566",
+      "credit": "NASA/JPL-Caltech/ASU",
+      "source_page": "https://mars.nasa.gov/mars2020/multimedia/raw-images/ZL0_0414_0703684168_488EBY_N0220788ZCAM08428_1100LMJ",
+      "record_url": "https://mars.nasa.gov/rss/api/?feed=raw_images&category=mars2020&feedtype=json&id=ZL0_0414_0703684168_488EBY_N0220788ZCAM08428_1100LMJ",
+      "image_url": "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/00414/ids/edr/browse/zcam/ZL0_0414_0703684168_488EBY_N0220788ZCAM08428_1100LMJ01_1200.jpg",
+      "local_file": "photos/ZL0_0414_0703684168_488EBY_N0220788ZCAM08428_1100LMJ.jpg",
+      "caption": "NASA's Mars Perseverance rover acquired this image using its Left Mastcam-Z camera. Mastcam-Z is a pair of cameras located high on the rover's mast.\n\nThis image was acquired on April 19, 2022 (Sol 414) at the local mean solar time of 10:05:54.",
+      "mission_record": {
+        "site": 22,
+        "drive": 788,
+        "rmc": "22_788"
+      },
+      "camera_position": {
+        "lon": 77.40855229,
+        "lat": 18.45316104,
+        "x": 199.74,
+        "y": 39.18,
+        "elev_geoid_m": -2545.27,
+        "source": "NASA localized waypoint for this site/drive (rover origin; mast ~2 m above)"
+      },
+      "target_position": null,
+      "target_position_note": "Not available: the record has no range to the photographed object.",
+      "heading": {
+        "azimuth_deg": 184.2,
+        "from_attitude_quaternion_deg": 184.2,
+        "from_yaw_plus_mastAz_deg": 184.3,
+        "agreement_deg": 0.0,
+        "hfov_deg": 6.3,
+        "elevation_deg": 4.3,
+        "status": "derived"
+      }
+    },
+    {
+      "product_id": "ZL0_0420_0704236463_331ECM_N0232872ZCAM08439_110085J",
+      "stop": "scarp_base",
+      "selection_note": "Blocks and sand at the base of the delta front",
+      "camera": "MCZ_LEFT",
+      "sol": 420,
+      "date_utc": "2022-04-26T09:21:05.175",
+      "lmst": "Sol-00420M15:24:41.629",
+      "credit": "NASA/JPL-Caltech/ASU",
+      "source_page": "https://mars.nasa.gov/mars2020/multimedia/raw-images/ZL0_0420_0704236463_331ECM_N0232872ZCAM08439_110085J",
+      "record_url": "https://mars.nasa.gov/rss/api/?feed=raw_images&category=mars2020&feedtype=json&id=ZL0_0420_0704236463_331ECM_N0232872ZCAM08439_110085J",
+      "image_url": "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/00420/ids/edr/browse/zcam/ZL0_0420_0704236463_331ECM_N0232872ZCAM08439_110085J01_1200.jpg",
+      "local_file": "photos/ZL0_0420_0704236463_331ECM_N0232872ZCAM08439_110085J.jpg",
+      "caption": "NASA's Mars Perseverance rover acquired this image using its Left Mastcam-Z camera. Mastcam-Z is a pair of cameras located high on the rover's mast.\n\nThis image was acquired on April 26, 2022 (Sol 420) at the local mean solar time of 15:24:41.",
+      "mission_record": {
+        "site": 23,
+        "drive": 2872,
+        "rmc": "23_2872"
+      },
+      "camera_position": {
+        "lon": 77.40136318,
+        "lat": 18.44982498,
+        "x": -204.49,
+        "y": -158.56,
+        "elev_geoid_m": -2523.072266,
+        "source": "NASA localized waypoint for this site/drive (rover origin; mast ~2 m above)"
+      },
+      "target_position": null,
+      "target_position_note": "Not available: the record has no range to the photographed object.",
+      "heading": {
+        "azimuth_deg": 329.0,
+        "from_attitude_quaternion_deg": 329.0,
+        "from_yaw_plus_mastAz_deg": 328.9,
+        "agreement_deg": 0.0,
+        "hfov_deg": 6.3,
+        "elevation_deg": -3.7,
+        "status": "derived"
+      }
+    },
+    {
+      "product_id": "ZL1_0464_0708130241_144ECM_N0260630ZCAM03381_0340LMJ",
+      "stop": "delta_layers",
+      "selection_note": "Layered sedimentary outcrop at the delta front",
+      "camera": "MCZ_LEFT",
+      "sol": 464,
+      "date_utc": "2022-06-10T10:57:47.868",
+      "lmst": "Sol-00464M12:05:02.895",
+      "credit": "NASA/JPL-Caltech/ASU",
+      "source_page": "https://mars.nasa.gov/mars2020/multimedia/raw-images/ZL1_0464_0708130241_144ECM_N0260630ZCAM03381_0340LMJ",
+      "record_url": "https://mars.nasa.gov/rss/api/?feed=raw_images&category=mars2020&feedtype=json&id=ZL1_0464_0708130241_144ECM_N0260630ZCAM03381_0340LMJ",
+      "image_url": "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/00464/ids/edr/browse/zcam/ZL1_0464_0708130241_144ECM_N0260630ZCAM03381_0340LMJ01_1200.jpg",
+      "local_file": "photos/ZL1_0464_0708130241_144ECM_N0260630ZCAM03381_0340LMJ.jpg",
+      "caption": "NASA's Mars Perseverance rover acquired this image using its Left Mastcam-Z camera. Mastcam-Z is a pair of cameras located high on the rover's mast.\n\nThis image was acquired on June 10, 2022 (Sol 464) at the local mean solar time of 12:05:02.",
+      "mission_record": {
+        "site": 26,
+        "drive": 630,
+        "rmc": "26_630"
+      },
+      "camera_position": {
+        "lon": 77.40614454,
+        "lat": 18.4586918,
+        "x": 64.35,
+        "y": 367.02,
+        "elev_geoid_m": -2523.304199,
+        "source": "NASA localized waypoint for this site/drive (rover origin; mast ~2 m above)"
+      },
+      "target_position": null,
+      "target_position_note": "Not available: the record has no range to the photographed object.",
+      "heading": {
+        "azimuth_deg": 324.3,
+        "from_attitude_quaternion_deg": 324.3,
+        "from_yaw_plus_mastAz_deg": 324.6,
+        "agreement_deg": 0.3,
+        "hfov_deg": 19.9,
+        "elevation_deg": 1.3,
+        "status": "derived"
+      }
+    },
+    {
+      "product_id": "ZL5_0464_0708122319_318ECM_N0260630ZCAM03377_1100LMJ",
+      "stop": "delta_layers",
+      "selection_note": "Close view of thin, inclined layers",
+      "camera": "MCZ_LEFT",
+      "sol": 464,
+      "date_utc": "2022-06-10T08:45:45.810",
+      "lmst": "Sol-00464M09:56:32.796",
+      "credit": "NASA/JPL-Caltech/ASU",
+      "source_page": "https://mars.nasa.gov/mars2020/multimedia/raw-images/ZL5_0464_0708122319_318ECM_N0260630ZCAM03377_1100LMJ",
+      "record_url": "https://mars.nasa.gov/rss/api/?feed=raw_images&category=mars2020&feedtype=json&id=ZL5_0464_0708122319_318ECM_N0260630ZCAM03377_1100LMJ",
+      "image_url": "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/00464/ids/edr/browse/zcam/ZL5_0464_0708122319_318ECM_N0260630ZCAM03377_1100LMJ01_1200.jpg",
+      "local_file": "photos/ZL5_0464_0708122319_318ECM_N0260630ZCAM03377_1100LMJ.jpg",
+      "caption": "NASA's Mars Perseverance rover acquired this image using its Left Mastcam-Z camera. Mastcam-Z is a pair of cameras located high on the rover's mast.\n\nThis image was acquired on June 10, 2022 (Sol 464) at the local mean solar time of 09:56:32.",
+      "mission_record": {
+        "site": 26,
+        "drive": 630,
+        "rmc": "26_630"
+      },
+      "camera_position": {
+        "lon": 77.40614454,
+        "lat": 18.4586918,
+        "x": 64.35,
+        "y": 367.02,
+        "elev_geoid_m": -2523.304199,
+        "source": "NASA localized waypoint for this site/drive (rover origin; mast ~2 m above)"
+      },
+      "target_position": null,
+      "target_position_note": "Not available: the record has no range to the photographed object.",
+      "heading": {
+        "azimuth_deg": 356.3,
+        "from_attitude_quaternion_deg": 356.3,
+        "from_yaw_plus_mastAz_deg": 356.2,
+        "agreement_deg": 0.0,
+        "hfov_deg": 6.3,
+        "elevation_deg": -2.8,
+        "status": "derived"
+      }
+    }
+  ],
+  "method": "Perseverance ground photos tied to science stops by mission record (RMC = site/drive), never by appearance.\n\nFor each selected product we save the image, the raw-image API JSON record, and derive:\n  * camera position  = the localized rover position for the image's site/drive (NASA waypoint file);\n                       the mast camera is ~2 m above and within ~1 m of that origin.\n  * viewing azimuth  = camera pointing vector (rover frame, from the record's camera model) rotated by\n                       the rover attitude quaternion (rover->site frame, +X north, +Y east, +Z down).\n                       Cross-checked against rover yaw + mast azimuth; if the two disagree by >10 deg\n                       the heading is withheld and no viewing cone is drawn.\n  * horizontal FOV   = 2 atan((W/2) / |A x H|) from the CAHV(ORE) model.\n  * photographed-object position: NOT AVAILABLE (no range in the record) and is never guessed.\n\nImage selection: the reviewer (Claude, 2026-11-14) looked at contact sheets of all Mastcam-Z frames whose\nsite/drive equals a corridor waypoint and chose frames that show rock layers.  Which stop a photo belongs to\ncomes only from the record's site/drive.\n"
+}

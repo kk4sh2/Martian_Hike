@@ -1,0 +1,6 @@
+{
+  "generated": "2026-11-14T09:19:17+00:00",
+  "archive": "https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/PERSEVERANCE/meda.html",
+  "status": "unavailable",
+  "reason": "The PDS Atmospheres MEDA archive could not be reached from the build machine (TLS failure through the network proxy). No MEDA CSV/label pair is in data/raw/meda/, so no surface weather is packaged."
+}
