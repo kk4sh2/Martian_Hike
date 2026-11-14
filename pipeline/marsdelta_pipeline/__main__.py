@@ -1,42 +1,37 @@
 """CLI: python -m marsdelta_pipeline <command>
 
-Commands
-  fetch            download every source listed in the manifest plan (large: ~2.3 GB HiRISE)
-  nili             Nili Patera change pipeline (fetch + process)
-  nili-process     re-run processing only on already downloaded observations
-  jezero           Jezero terrain/ortho corridor extraction, waypoints, photos
-  meda             parse MEDA CSV + label files placed in data/raw/meda
-  routes           compute route options / metrics for both areas
-  validate         run data and provenance checks
-  pack             build the limited-size offline demo pack
-  all              everything in order
+  fetch-process   everything below in order (downloads ~2.6 GB on first run; later runs reuse files)
+  nili            Nili Patera: download HiRISE pair + NASA PIA products, run change pipeline
+  nili-process    re-run Nili processing only (observations already downloaded)
+  jezero          Jezero corridor: DTM/ortho range reads, waypoints, geology, ground photos
+  dust            LMD regional dust cells for both areas
+  meda            parse MEDA CSV + PDS4 labels from data/raw/meda (writes 'unavailable' status if none)
+  validate        provenance and data-integrity checks (non-zero exit on failure)
+  pack            build the offline demo pack (needs `npm run build` in web/ first)
 """
 import sys
 
 
 def main(argv):
-    cmd = argv[1] if len(argv) > 1 else "all"
-    if cmd in ("nili", "fetch", "all"):
-        from . import nili
-        nili.main("all")
+    cmd = argv[1] if len(argv) > 1 else "fetch-process"
+    if cmd in ("nili", "fetch-process"):
+        from . import nili; nili.main("all")
     if cmd == "nili-process":
-        from . import nili
-        nili.main("process")
-    if cmd in ("jezero", "fetch", "all"):
-        from . import jezero
-        jezero.main()
-    if cmd in ("meda", "all"):
-        from . import meda
-        meda.main()
-    if cmd in ("routes", "all"):
-        from . import routes
-        routes.main()
-    if cmd in ("validate", "all"):
-        from . import validate
-        sys.exit(validate.main())
+        from . import nili; nili.main("process")
+    if cmd in ("jezero", "fetch-process"):
+        from . import jezero, photos; jezero.main(); photos.main()
+    if cmd in ("dust", "fetch-process"):
+        from . import dust; dust.main()
+    if cmd in ("meda", "fetch-process"):
+        from . import meda; meda.main()
+    if cmd in ("validate", "fetch-process"):
+        from . import validate; rc = validate.main()
+        if rc:
+            sys.exit(rc)
     if cmd == "pack":
-        from . import pack
-        pack.main()
+        from . import pack; pack.main()
+    if cmd in ("-h", "--help", "help"):
+        print(__doc__)
 
 
 if __name__ == "__main__":

@@ -78,7 +78,7 @@ table.cmp th { color: var(--muted); font-weight: 500; } table.cmp td.best { colo
 .viewer .lbl { position: absolute; left: 8px; top: 8px; background: #000b; padding: 3px 8px; border-radius: 6px; font-size: 12px; }
 .viewer .scale { position: absolute; right: 8px; bottom: 8px; background: #000b; padding: 3px 8px; border-radius: 6px; font-size: 12px; }
 .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.demoBar { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 1500; width: min(820px, 96vw); background: rgba(20,22,28,.97); border: 2px solid var(--accent); border-radius: 14px; padding: 12px 14px; box-shadow: 0 8px 30px #000a; }
+.demoBar { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 2500; width: min(820px, 96vw); background: rgba(20,22,28,.97); border: 2px solid var(--accent); border-radius: 14px; padding: 12px 14px; box-shadow: 0 8px 30px #000a; }
 .demoBar .steps { display: flex; gap: 4px; margin-bottom: 8px; } .demoBar .steps span { flex: 1; height: 5px; border-radius: 3px; background: var(--line); } .demoBar .steps span.done { background: var(--accent); }
 .demoBar h4 { margin: 0 0 4px; } .demoBar p { margin: 0 0 8px; font-size: 14px; line-height: 1.4; }
 .photoCard img { width: 100%; border-radius: 8px; display: block; }

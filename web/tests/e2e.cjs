@@ -1,0 +1,132 @@
+// Acceptance tests against the built site (npm run build && npx vite preview --port 4173).
+// Run: node tests/e2e.cjs [baseUrl]   -> prints a results table and writes ../docs/e2e_results.json
+const { chromium } = require('playwright');
+const fs = require('fs');
+const BASE = process.argv[2] || 'http://localhost:4173/';
+const results = [];
+const rec = (name, pass, detail) => { results.push({ name, pass, detail }); console.log(`${pass === true ? 'PASS' : pass === false ? 'FAIL' : 'BLOCKED'}  ${name} — ${detail}`); };
+
+(async () => {
+  const browser = await chromium.launch();
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, hasTouch: true });
+  const p = await ctx.newPage();
+  const errors = []; p.on('pageerror', (e) => errors.push(e.message));
+  await p.goto(BASE, { waitUntil: 'networkidle' }); await p.waitForSelector('#cRoutes');
+  const panel = () => p.textContent('#panel');
+
+  // 1. ground photo traced to mission record
+  await p.evaluate(() => document.getElementById('cPhotos').classList.remove('collapsed'));
+  await p.click('[data-photo]');
+  const modal = await p.textContent('#modal');
+  const rmcMatch = /RMC (\d+_\d+)/.exec(modal); const link = await p.getAttribute('#modal a[href*="raw-images"]', 'href');
+  const photos = JSON.parse(fs.readFileSync(__dirname + '/../public/data/jezero/photos.json')).photos;
+  const wps = JSON.parse(fs.readFileSync(__dirname + '/../public/data/jezero/rover_waypoints.json')).stops;
+  const ph = photos[0]; const wp = wps.find((w) => w.rmc === ph.mission_record.rmc);
+  rec('Ground photo traces to its mission record', !!rmcMatch && link.includes(ph.product_id) && !!wp && Math.abs(wp.lon - ph.camera_position.lon) < 1e-9,
+    `${ph.product_id} → RMC ${rmcMatch && rmcMatch[1]} (sol ${wp && wp.sol}), raw-image page ${link}`);
+  await p.click('#modal .close');
+
+  // 2. landing pin move & weather distance / gap
+  const before = await p.textContent('#cBrief');
+  const box = await p.locator('.leaflet-marker-draggable').boundingBox();
+  await p.mouse.move(box.x + box.width / 2, box.y + box.height - 2); await p.mouse.down(); await p.mouse.move(box.x + 140, box.y - 60, { steps: 8 }); await p.mouse.up();
+  await p.waitForTimeout(400);
+  const after = await p.textContent('#cBrief');
+  rec('Moving the landing pin updates the briefing', before !== after, `pin text changed: ${/Pin: ([^(]+)/.exec(after)?.[1]?.trim()}`);
+  const wx = await p.textContent('#cWx');
+  if (/No MEDA observation packaged/.test(wx)) rec('Pin move changes distance to a dated MEDA observation; missing interval explicit', null, 'BLOCKED: no MEDA CSV/label could be retrieved; card states this explicitly instead of showing values');
+  else rec('Weather card shows distance', /Distance to pin/.test(wx), wx.slice(0, 120));
+
+  // 3. two routes with return legs
+  const routes = await p.textContent('#cRoutes');
+  rec('Two Jezero routes to the same objective both include the return leg', (routes.match(/incl\. return/g) || []).length === 2, /Total distance([^E]+)/.exec(routes)?.[1]?.replace(/\s+/g, ' '));
+
+  // 4. MC reproducible and responsive
+  const mc1 = await p.textContent('#cMC');
+  await p.evaluate(() => document.querySelector('#cMC details').open = true);
+  await p.fill('[data-a=o2Kg]', '0.16'); await p.dispatchEvent('[data-a=o2Kg]', 'change'); await p.waitForTimeout(500);
+  const mc2 = await p.textContent('#cMC');
+  await p.evaluate(() => document.querySelector('#cMC details').open = true);
+  await p.fill('[data-a=o2Kg]', '1.2'); await p.dispatchEvent('[data-a=o2Kg]', 'change'); await p.waitForTimeout(500);
+  const mc3 = await p.textContent('#cMC');
+  const pct = (t) => (t.match(/(\d+\.\d)% of \d+ simulated/g) || []).join(' | ');
+  rec('Success estimate responds to resources and is reproducible', pct(mc1) === pct(mc3) && pct(mc1) !== pct(mc2) && /Oxygen fell below/.test(mc2), `default ${pct(mc1)}; O2 0.16 kg ${pct(mc2)} (main failure oxygen); restored ${pct(mc3)}`);
+  await p.evaluate(() => document.querySelector('#cMC details').open = true);
+  await p.selectOption('[data-a=environment]', 'cold'); await p.fill('[data-a=batteryWh]', '290'); await p.dispatchEvent('[data-a=batteryWh]', 'change'); await p.waitForTimeout(500);
+  const mc4 = await p.textContent('#cMC');
+  await p.evaluate(() => document.querySelector('#cMC details').open = true);
+  await p.fill('[data-a=obstaclesPerKm]', '40'); await p.fill('[data-a=evaLimitH]', '2'); await p.dispatchEvent('[data-a=evaLimitH]', 'change'); await p.waitForTimeout(500);
+  const mc5 = await p.textContent('#cMC');
+  rec('Environment and obstacle density change the estimate and name the limiting factor', /Battery fell below/.test(mc4) && /EVA time limit/.test(mc5), `cold+290 Wh: ${pct(mc4)} (battery); 40 obstacles/km + 2 h: ${pct(mc5)} (time)`);
+  await p.evaluate(() => document.querySelector('#mcReset').click()); await p.waitForTimeout(400);
+
+  // 5. Nili: intersecting, clear, outside coverage
+  await p.click('#areaSel button[data-area=nili]'); await p.waitForTimeout(800);
+  const st = {};
+  for (const id of ['crossing', 'south', 'east']) { await p.click(`[data-route=${id}]`); await p.waitForTimeout(400); st[id] = (await p.textContent('#cChange')).match(/Route impact[^\n]*?\n?([\s\S]*?)Covered by analysis: ([^.]+)/)?.[0]?.replace(/\s+/g, ' ').slice(0, 220); }
+  rec('Intersecting / non-intersecting / out-of-coverage routes give different, correct results',
+    /Inspect the highlighted crossing/.test(st.crossing) && /crosses no candidate/.test(st.south) && /no repeat-imagery analysis/.test(st.east), JSON.stringify(st));
+  await p.click('[data-route=crossing]'); await p.waitForTimeout(300);
+
+  // 6. leakage
+  await p.click('#areaSel button[data-area=jezero]'); await p.waitForTimeout(600);
+  const jt = await panel(); const jl = await p.textContent('#legend');
+  rec('Nili Patera evidence never appears in Jezero', !/NP-0|PSP_00|PIA15680/.test(jt + jl) && /No repeat-imagery change analysis covers this mission area/.test(await p.textContent('#decision')), 'Jezero panel/legend free of Nili IDs; Jezero routes report "no change analysis"');
+  await p.click('#areaSel button[data-area=nili]'); await p.waitForTimeout(600);
+  const nt = await panel();
+  rec('Jezero surface weather never appears in Nili', /No surface weather is shown for Nili Patera/.test(nt) && !/MEDA station/.test(nt), 'Nili card states no surface weather');
+
+  // 7. crew: drop tablet, move, interrupt link, restore
+  await p.click('#areaSel button[data-area=jezero]'); await p.waitForTimeout(400);
+  await p.click('#viewSel button[data-view=tablet]'); await p.click('#tbReset'); await p.waitForTimeout(200);
+  await p.click('[data-tcs=drop]'); await p.click('#tbStart'); await p.waitForTimeout(2500);
+  const s1 = await p.textContent('#tbSide');
+  await p.click('[data-tcs=cut]'); await p.waitForTimeout(1500);
+  const s2 = await p.textContent('#tbSide');
+  await p.click('[data-tcs=restore]'); await p.waitForTimeout(800);
+  const s3 = await p.textContent('#tbSide');
+  await p.click('[data-tcs=spare]'); await p.waitForTimeout(500);
+  const s4 = await p.textContent('#tbSide');
+  rec('Tablet left behind vs suit fix', /TAB-1 is not with its wearer/.test(s1), /TAB-1 is not with its wearer[^.]*\.[^.]*\.[^.]*\./.exec(s1)?.[0]);
+  rec('Suit link loss freezes last fix and shows age; restore resumes live', /SUIT-B2 ○ LAST KNOWN/.test(s2) && /last contact/.test(s2) && /SUIT-B2 ● LIVE/.test(s3), `${/SUIT-B2[^±]*/.exec(s2)?.[0]} → ${/SUIT-B2[^±]*/.exec(s3)?.[0]}`);
+  rec('Empty/unconfirmed suit reports location with wearer uncertainty', /SUIT-S3 ● LIVE/.test(s4) && /Wearer unconfirmed/.test(s4), /SUIT-S3[^…]*/.exec(s4)?.[0]);
+  await p.click('#tbPause');
+
+  // 8. touch targets
+  const small = await p.$$eval('#tabletView button', (bs) => bs.filter((b) => b.offsetParent && b.getBoundingClientRect().height < 44).map((b) => b.textContent.trim()));
+  rec('Tablet touch targets ≥ 44 px', small.length === 0, small.length ? `small: ${small.join(', ')}` : 'all tablet buttons ≥ 44 px tall');
+  for (const vp of [{ width: 1024, height: 768 }, { width: 1194, height: 834 }, { width: 1366, height: 1024 }]) {
+    await p.setViewportSize(vp); await p.waitForTimeout(300);
+    const ok = await p.evaluate(() => { const c = document.querySelector('#tabletView .controls').getBoundingClientRect(); const n = document.querySelector('canvas.nav').getBoundingClientRect(); return c.bottom <= innerHeight + 1 && n.height > 300 && document.documentElement.scrollWidth <= innerWidth; });
+    await p.screenshot({ path: `/tmp/shots/tablet_${vp.width}x${vp.height}.png` });
+    rec(`Tablet landscape layout ${vp.width}×${vp.height}`, ok, ok ? 'controls visible, nav canvas > 300 px, no horizontal scroll' : 'layout problem');
+  }
+  await p.setViewportSize({ width: 1280, height: 800 });
+
+  // 9. guided Nili demo
+  await p.click('#viewSel button[data-view=planner]');
+  await p.click('#demoBtn'); await p.click('#dN'); await p.waitForTimeout(800);
+  for (let i = 0; i < 6; i++) { await p.click('#dNext'); await p.waitForTimeout(i === 3 ? 2500 : 900); }
+  const logTxt = await p.textContent('#cLog');
+  rec('Guided Nili demo runs end to end and logs the decision', /Acknowledged crossing of NP-/.test(logTxt) && /Bypass search/.test(logTxt) && /repeat observation PSP_005684_1890/.test(logTxt), 'log contains simulated receipt, bypass result and acknowledgement');
+  await p.click('#dNext').catch(() => {});
+
+  // 10. offline after caching
+  await p.goto(BASE, { waitUntil: 'networkidle' });
+  await p.waitForFunction(() => navigator.serviceWorker && navigator.serviceWorker.controller, null, { timeout: 15000 }).catch(() => {});
+  await p.waitForTimeout(3000);
+  await ctx.setOffline(true);
+  await p.reload({ waitUntil: 'domcontentloaded' }); await p.waitForTimeout(2500);
+  const offOk = await p.evaluate(() => !!document.querySelector('#cRoutes') && document.querySelectorAll('.leaflet-image-layer').length > 0);
+  await p.click('#areaSel button[data-area=nili]').catch(() => {}); await p.waitForTimeout(800);
+  const offN = await p.evaluate(() => !!document.querySelector('#cChange'));
+  rec('Works offline (airplane mode) after first load', offOk && offN, `offline reload: planner ${offOk}, Nili evidence ${offN}, pill "${await p.textContent('#netState')}"`);
+  await p.screenshot({ path: '/tmp/shots/offline_nili.png' });
+  await ctx.setOffline(false);
+
+  rec('No uncaught page errors', errors.length === 0, errors.slice(0, 3).join(' | ') || 'none');
+  fs.mkdirSync(__dirname + '/../../docs', { recursive: true });
+  fs.writeFileSync(__dirname + '/../../docs/e2e_results.json', JSON.stringify({ date: new Date().toISOString(), base: BASE, results }, null, 2));
+  await browser.close();
+  process.exit(results.some((r) => r.pass === false) ? 1 : 0);
+})();

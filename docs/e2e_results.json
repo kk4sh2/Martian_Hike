@@ -1,0 +1,101 @@
+{
+  "date": "2026-11-14T09:35:11.413Z",
+  "base": "http://localhost:4173/",
+  "results": [
+    {
+      "name": "Ground photo traces to its mission record",
+      "pass": true,
+      "detail": "ZL0_0414_0703684150_456EBY_N0220788ZCAM08428_1100LMJ → RMC 22_788 (sol 413), raw-image page https://mars.nasa.gov/mars2020/multimedia/raw-images/ZL0_0414_0703684150_456EBY_N0220788ZCAM08428_1100LMJ"
+    },
+    {
+      "name": "Moving the landing pin updates the briefing",
+      "pass": true,
+      "detail": "pin text changed: 18.45426° N, 77.41089° E"
+    },
+    {
+      "name": "Pin move changes distance to a dated MEDA observation; missing interval explicit",
+      "pass": null,
+      "detail": "BLOCKED: no MEDA CSV/label could be retrieved; card states this explicitly instead of showing values"
+    },
+    {
+      "name": "Two Jezero routes to the same objective both include the return leg",
+      "pass": true,
+      "detail": "1.56 km incl. return1.62 km incl. return"
+    },
+    {
+      "name": "Success estimate responds to resources and is reproducible",
+      "pass": true,
+      "detail": "default 100.0% of 500 simulated | 100.0% of 500 simulated; O2 0.16 kg 34.2% of 500 simulated | 33.8% of 500 simulated (main failure oxygen); restored 100.0% of 500 simulated | 100.0% of 500 simulated"
+    },
+    {
+      "name": "Environment and obstacle density change the estimate and name the limiting factor",
+      "pass": true,
+      "detail": "cold+290 Wh: 4.0% of 500 simulated | 5.0% of 500 simulated (battery); 40 obstacles/km + 2 h: 0.0% of 500 simulated | 0.0% of 500 simulated (time)"
+    },
+    {
+      "name": "Intersecting / non-intersecting / out-of-coverage routes give different, correct results",
+      "pass": true,
+      "detail": "{\"crossing\":\"Route impact · A. Direct to north contact (crosses the dune)Inspect the highlighted crossings. Repeat orbital imagery shows a candidate surface difference here. Inspect 010 · 194-231 m (36.8 m, leg 1)Inspect 010 · 531-56\",\"south\":\"Route impact · B. South bedrock survey (stays on bedrock)The whole route lies inside the change-analysis coverage and crosses no candidate surface difference. Covered by analysis: 182 m of 182 m\",\"east\":\"Route impact · C. East traverse (leaves analysed coverage)No candidate differences on the 299 m inside coverage; 301 m of the walk has no repeat-imagery analysis. Covered by analysis: 299 m of 600 m\"}"
+    },
+    {
+      "name": "Nili Patera evidence never appears in Jezero",
+      "pass": true,
+      "detail": "Jezero panel/legend free of Nili IDs; Jezero routes report \"no change analysis\""
+    },
+    {
+      "name": "Jezero surface weather never appears in Nili",
+      "pass": true,
+      "detail": "Nili card states no surface weather"
+    },
+    {
+      "name": "Tablet left behind vs suit fix",
+      "pass": true,
+      "detail": "TAB-1 is not with its wearer. It was left at a fixed spot (purple box). The position shown is SUIT-A1's suit beacon, 39 m away."
+    },
+    {
+      "name": "Suit link loss freezes last fix and shows age; restore resumes live",
+      "pass": true,
+      "detail": "SUIT-B2 ○ LAST KNOWN · 57 m @ 70° (rel 160°)last contact 1:33 ago ·  → SUIT-B2 ● LIVE · 108 m @ 95° (rel -146°)"
+    },
+    {
+      "name": "Empty/unconfirmed suit reports location with wearer uncertainty",
+      "pass": true,
+      "detail": "SUIT-S3 ● LIVE · 85 m @ 69° (rel -156°)±1.6 m · Wearer unconfirmed: the beacon reports where the SUIT is. A beacon alone cannot "
+    },
+    {
+      "name": "Tablet touch targets ≥ 44 px",
+      "pass": true,
+      "detail": "all tablet buttons ≥ 44 px tall"
+    },
+    {
+      "name": "Tablet landscape layout 1024×768",
+      "pass": true,
+      "detail": "controls visible, nav canvas > 300 px, no horizontal scroll"
+    },
+    {
+      "name": "Tablet landscape layout 1194×834",
+      "pass": true,
+      "detail": "controls visible, nav canvas > 300 px, no horizontal scroll"
+    },
+    {
+      "name": "Tablet landscape layout 1366×1024",
+      "pass": true,
+      "detail": "controls visible, nav canvas > 300 px, no horizontal scroll"
+    },
+    {
+      "name": "Guided Nili demo runs end to end and logs the decision",
+      "pass": true,
+      "detail": "log contains simulated receipt, bypass result and acknowledgement"
+    },
+    {
+      "name": "Works offline (airplane mode) after first load",
+      "pass": true,
+      "detail": "offline reload: planner true, Nili evidence true, pill \"OFFLINE · cached data\""
+    },
+    {
+      "name": "No uncaught page errors",
+      "pass": true,
+      "detail": "none"
+    }
+  ]
+}

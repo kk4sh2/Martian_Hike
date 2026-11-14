@@ -192,6 +192,7 @@ function provTag(k: keyof typeof PROVENANCE) { const v = PROVENANCE[k]; return `
 function renderPanel(area: AreaId) {
   const el = $('#panel'); const scroll = el.scrollTop;
   const collapsed = new Set([...el.querySelectorAll('.card.collapsed')].map((c) => c.id));
+  const openDet = new Set([...el.querySelectorAll('.card details[open]')].map((d) => d.closest('.card')!.id));
   const plans = optionsFor(area).map((o) => app.plans[`${area}:${o.id}`]).filter(Boolean) as EvaluatedPlan[];
   const html: string[] = [];
   html.push(area === 'jezero'
@@ -210,7 +211,7 @@ function renderPanel(area: AreaId) {
   html.push(card('cCrew', 'Crew tracking', '<span class="tag sim">simulated</span>', crewHtml(area)));
   html.push(card('cLog', 'Mission log', '', logHtml(area), true));
   el.innerHTML = html.join('');
-  el.querySelectorAll('.card').forEach((c) => { if (collapsed.has(c.id)) c.classList.add('collapsed'); });
+  el.querySelectorAll('.card').forEach((c) => { if (collapsed.has(c.id)) c.classList.add('collapsed'); if (openDet.has(c.id)) c.querySelector('details')?.setAttribute('open', ''); });
   el.querySelectorAll<HTMLElement>('.card > h3').forEach((h) => h.onclick = () => h.parentElement!.classList.toggle('collapsed'));
   el.scrollTop = scroll;
   bindPanel(area);

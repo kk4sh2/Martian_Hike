@@ -1,0 +1,11 @@
+numpy
+scipy
+rasterio
+opencv-python-headless
+shapely
+geopandas
+pyproj
+glymur
+Pillow
+netCDF4
+xarray
