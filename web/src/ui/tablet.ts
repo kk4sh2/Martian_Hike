@@ -1,10 +1,10 @@
 import { app, activePlan, crewFor, resetCrew } from '../app';
 import { state, log, emit, onChange } from '../state';
-import { $, esc, fmtM, fmtH } from './dom';
+import { $, esc, fmtM } from './dom';
 import { url } from '../data';
 import { bearing, dist, pointAlong, type XY } from '../core/geo';
 import { walkSpeed } from '../core/routing';
-import { fixState, moveSuit, step, relative, fmtT, wearerText } from '../core/crew';
+import { fixState, moveSuit, step, relative, fmtT } from '../core/crew';
 import { openEvidence } from './evidence';
 import { crewScenario } from './planner';
 
@@ -28,14 +28,16 @@ function track(): Track | null {
 
 export function initTablet() {
   const el = $('#tabletView');
-  el.innerHTML = `<div class="navWrap"><canvas class="nav"></canvas><div class="instr" id="tbInstr"></div><div class="evChip" id="tbEv"></div></div>
+  el.innerHTML = `<div class="navWrap"><canvas class="nav"></canvas><div class="instr" id="tbInstr"></div><div class="evChip" id="tbEv"></div>
+      <div class="scenRow" id="tbScenRow" hidden><span>Crew scenarios <span class="tag sim">simulated</span></span><button data-tcs="drop">Leave tablet A behind</button><button data-tcs="cut">Cut B's suit link</button><button data-tcs="restore">Restore B's link</button><button data-tcs="spare">Spare suit on</button></div></div>
     <div class="side" id="tbSide"></div>
     <div class="controls">
       <button id="tbStart" class="primary">▶ Start</button><button id="tbPause">⏸ Pause</button><button id="tbResume">⏵ Resume</button><button id="tbReset">↺ Reset</button>
-      <label class="row">Time ×<select id="tbSpeed"><option>10</option><option selected>30</option><option>60</option><option>120</option></select></label>
-      <label class="row">Viewing as <select id="tbView"><option value="TAB-1">TAB-1 (Astronaut A)</option><option value="TAB-2">TAB-2 (Astronaut B)</option></select></label>
-      <button data-tcs="drop">Leave TAB-1 behind</button><button data-tcs="cut">Cut B link</button><button data-tcs="restore">Restore link</button><button data-tcs="spare">Spare suit on</button>
+      <label class="row">Speed <select id="tbSpeed"><option value="10">×10</option><option value="30" selected>×30</option><option value="60">×60</option><option value="120">×120</option></select></label>
+      <label class="row">Tablet <select id="tbView"><option value="TAB-1">Astronaut A</option><option value="TAB-2">Astronaut B</option></select></label>
+      <button id="tbScen" aria-expanded="false" style="margin-left:auto">Crew scenarios ▴</button>
     </div>`;
+  $('#tbScen').onclick = () => { const r = $('#tbScenRow'); r.hidden = !r.hidden; $('#tbScen').setAttribute('aria-expanded', String(!r.hidden)); };
   $('#tbStart').onclick = () => { app.walk[state.area] = 0; running = true; log('event', 'Tablet walk started (simulated).', true); loop(); };
   $('#tbPause').onclick = () => { running = false; clearInterval(timer); timer = undefined; log('event', 'Tablet walk paused.', true); draw(); };
   $('#tbResume').onclick = () => { if (!running) { running = true; log('event', 'Tablet walk resumed.', true); loop(); } };
@@ -113,18 +115,18 @@ export function draw() {
   g.beginPath(); g.arc(cx, cy, ownerFix.sigma2_m * k, 0, 7); g.strokeStyle = live ? '#5fd38d88' : '#aaa'; g.stroke();
   g.fillStyle = live ? '#5ec8ff' : '#888'; g.beginPath(); g.moveTo(cx, cy - 18); g.lineTo(cx + 13, cy + 12); g.lineTo(cx, cy + 5); g.lineTo(cx - 13, cy + 12); g.closePath(); g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 2; g.stroke();
   // compass
-  g.save(); g.translate(W - 50, 110); g.rotate((-hdg * Math.PI) / 180); g.fillStyle = '#ff5d5d'; g.beginPath(); g.moveTo(0, -26); g.lineTo(7, 0); g.lineTo(-7, 0); g.fill(); g.fillStyle = '#ccc'; g.beginPath(); g.moveTo(0, 26); g.lineTo(7, 0); g.lineTo(-7, 0); g.fill(); g.fillStyle = '#fff'; g.font = 'bold 12px system-ui'; g.textAlign = 'center'; g.fillText('N', 0, -30); g.restore();
-  g.fillStyle = '#c792ff'; g.font = '12px system-ui'; g.textAlign = 'left'; g.fillText(`SIMULATED crew position · heading ${hdg.toFixed(0)}° · ${area === 'nili' ? 'hypothetical walk over historical 2007 imagery' : 'Jezero corridor, HiRISE ortho'}`, 12, H - 12);
+  g.save(); g.translate(W - 46, H - 70); g.rotate((-hdg * Math.PI) / 180); g.fillStyle = '#ff5d5d'; g.beginPath(); g.moveTo(0, -26); g.lineTo(7, 0); g.lineTo(-7, 0); g.fill(); g.fillStyle = '#ccc'; g.beginPath(); g.moveTo(0, 26); g.lineTo(7, 0); g.lineTo(-7, 0); g.fill(); g.fillStyle = '#fff'; g.font = 'bold 12px system-ui'; g.textAlign = 'center'; g.fillText('N', 0, -30); g.restore();
+  g.fillStyle = '#c792ff'; g.font = '12px system-ui'; g.textAlign = 'left'; g.fillText(`Simulated position · heading ${hdg.toFixed(0)}° · ${area === 'nili' ? 'imagery from 2007' : 'HiRISE imagery'}`, 12, H - 12);
   // instruction
   const next = T.stopsAt.find((q) => q.s > s + 1);
   const ins = $('#tbInstr');
   let warn = '';
   const nextCross = plan.impact.crossings.find((c) => c.endAlong_m > s);
-  if (nextCross && nextCross.startAlong_m - s < 150) warn = nextCross.startAlong_m > s ? `Change crossing in ${fmtM(nextCross.startAlong_m - s)}` : 'Crossing candidate change region now';
+  if (nextCross && nextCross.startAlong_m - s < 150) warn = nextCross.startAlong_m > s ? `Changed ground in ${fmtM(nextCross.startAlong_m - s)}` : 'Crossing changed ground now';
   const turn = (() => { const h2 = bearing(pointAlong(T.pts, Math.min(T.total, s + 15)), pointAlong(T.pts, Math.min(T.total, s + 40))); const d = ((h2 - hdg + 540) % 360) - 180; return Math.abs(d) < 15 ? 'Continue straight' : `Bear ${d < 0 ? 'left' : 'right'} ${Math.abs(d).toFixed(0)}°`; })();
   ins.className = `instr ${warn ? 'warn' : ''}`;
-  ins.innerHTML = s >= T.total ? `✓ Back at habitat <small>Walk complete</small>` : `<span style="font-size:34px">${warn ? '⚠' : '⬆'}</span><div>${warn ? esc(warn) : turn}<small>${next ? `${fmtM(next.s - s)} to ${esc(next.label.split('(')[0])}` : ''} · ${fmtM(T.total - s)} remaining incl. return</small></div>`;
-  $('#tbEv').innerHTML = nextCross ? `<button id="tbEvBtn">🔍 Inspect crossing · ${nextCross.regionId.slice(-3)}</button>` : '';
+  ins.innerHTML = s >= T.total ? `✓ Back at habitat <small>Walk complete</small>` : `<span style="font-size:34px">${warn ? '⚠' : turn.startsWith('Bear left') ? '↖' : turn.startsWith('Bear right') ? '↗' : '⬆'}</span><div>${warn ? esc(warn) : turn}<small>${next ? `${fmtM(next.s - s)} to ${esc(next.label.split('(')[0])}` : ''} · ${fmtM(T.total - s)} remaining incl. return</small></div>`;
+  $('#tbEv').innerHTML = nextCross ? `<button id="tbEvBtn">🔍 Inspect changed ground ahead</button>` : '';
   const eb = document.getElementById('tbEvBtn'); if (eb) eb.onclick = () => openEvidence(nextCross!.regionId, nextCross);
   side(T, s, crew, owner, tab);
 }
@@ -133,14 +135,19 @@ function side(T: Track, s: number, crew: ReturnType<typeof crewFor>, owner: any,
   const p = activePlan()!; const m = p.metrics!; const frac = T.total ? s / T.total : 0;
   const o2now = 100 - (100 - m.o2Remaining_pct) * frac, bnow = 100 - (100 - m.batteryRemaining_pct) * frac;
   const el = $('#tbSide');
-  const tabMsg = tab.carriedBy ? '' : `<div class="warnbox">${tab.id} is <b>not with its wearer</b>. It was left at a fixed spot (purple box). The position shown is ${owner.id}'s suit beacon, ${fmtM(dist(tab.pos, owner.lastFix.xy))} away.</div>`;
+  const tabMsg = tab.carriedBy ? '' : `<div class="warnbox">${tab.id} is <b>not with its wearer</b>. It was left behind (purple box). The arrow shows ${owner.id}'s suit beacon, ${fmtM(dist(tab.pos, owner.lastFix.xy))} away.</div>`;
   const live = fixState(crew, owner) === 'live';
   el.innerHTML = `${tabMsg}${live ? '' : `<div class="badbox">Own suit fix is not live: last fix ${fmtT(crew.t - owner.lastFix.t)} old.</div>`}
-    <div class="res"><div><small>O₂ now</small><span class="big">${o2now.toFixed(0)}%</span></div><div><small>Battery now</small><span class="big">${bnow.toFixed(0)}%</span></div><div><small>Remaining</small><span class="big">${fmtM(T.total - s)}</span></div></div>
-    <div class="note">Projected at habitat (nominal): O₂ ${m.o2Remaining_pct.toFixed(0)}%, battery ${m.batteryRemaining_pct.toFixed(0)}%; reserve ${state.assumptions.reservePct}%. Walk total ${fmtM(m.distance_m)}, ${fmtH(m.nominalDuration_s)} nominal. Simulated mission success: ${p.mc?.successPct.toFixed(0)}% of ${p.mc?.trials} runs.</div>
+    <div class="res"><div><small>O₂ now</small><span class="big">${o2now.toFixed(0)}%</span></div><div><small>Battery now</small><span class="big">${bnow.toFixed(0)}%</span></div><div><small>To go</small><span class="big">${fmtM(T.total - s)}</span></div></div>
+    <div class="note">Back at the habitat with O₂ ${m.o2Remaining_pct.toFixed(0)}% and battery ${m.batteryRemaining_pct.toFixed(0)}% (keep ${state.assumptions.reservePct}%). ${p.mc ? `${p.mc.successPct.toFixed(0)}% of simulated missions made it back.` : ''}</div>
     <canvas class="overview" id="tbOv" width="320" height="266"></canvas>
-    <h4 style="margin:10px 0 6px">Crew</h4><div class="crewList">${crew.suits.filter((q) => q.id !== owner.id).map((su) => { const r = relative(crew, owner, su); const fs = fixState(crew, su); return `<button data-sel="${su.id}" class="${su.id === selected ? 'on' : ''}">${su.id} ${fs === 'live' ? '● LIVE' : su.lastFix ? '○ LAST KNOWN' : '— no fix'}${r ? ` · ${r.range_m.toFixed(0)} m @ ${r.bearing_deg.toFixed(0)}° (rel ${(((r.bearing_deg - bearing(pointAlong(T.pts, Math.max(0, s - 3)), pointAlong(T.pts, Math.min(T.total, s + 8))) + 540) % 360) - 180).toFixed(0)}°)` : ''}<br><small>${fs === 'live' ? '' : su.lastFix ? `last contact ${fmtT(r!.age_s)} ago · ` : ''}±${su.lastFix?.sigma2_m.toFixed(1) ?? '—'} m · ${esc(wearerText(su)).slice(0, 80)}${su.wearer === 'unconfirmed' ? '…' : ''}</small></button>`; }).join('')}</div>
-    <div class="note">Bearing is straight-line. Walking route to a crewmate is terrain-checked in the planner's Crew card.</div>`;
+    <h4 style="margin:10px 0 6px">Crew <span class="tag sim">simulated</span></h4><div class="crewList">${crew.suits.filter((q) => q.id !== owner.id).map((su) => {
+      const r = relative(crew, owner, su); const fs = fixState(crew, su);
+      const relDeg = r ? (((r.bearing_deg - bearing(pointAlong(T.pts, Math.max(0, s - 3)), pointAlong(T.pts, Math.min(T.total, s + 8))) + 540) % 360) - 180) : 0;
+      const where = r ? `${r.range_m.toFixed(0)} m ${dirWord(relDeg)}` : '';
+      const wear = su.wearer === 'unconfirmed' ? 'Wearer unconfirmed: shows where the suit is, not that someone is in it' : 'Wearer confirmed';
+      return `<button data-sel="${su.id}" class="${su.id === selected ? 'on' : ''}">${su.id} ${fs === 'live' ? '● LIVE' : su.lastFix ? '○ LAST KNOWN' : '— no fix'} · ${esc(su.astronaut.split('(')[0].trim())}<br><small>${where}${fs !== 'live' && su.lastFix ? ` · last contact ${fmtT(r!.age_s)} ago` : ''}${su.lastFix ? ` · ±${su.lastFix.sigma2_m.toFixed(1)} m` : ''}<br>${wear}</small></button>`; }).join('')}</div>
+`;
   el.querySelectorAll<HTMLButtonElement>('[data-sel]').forEach((b) => b.onclick = () => { selected = b.dataset.sel!; draw(); });
   // overview (north-up)
   const ov = el.querySelector('#tbOv') as HTMLCanvasElement; const g = ov.getContext('2d')!; g.fillStyle = '#000'; g.fillRect(0, 0, ov.width, ov.height);
@@ -151,6 +158,8 @@ function side(T: Track, s: number, crew: ReturnType<typeof crewFor>, owner: any,
   const [a, b] = Q(owner.lastFix.xy); g.fillStyle = '#5ec8ff'; g.beginPath(); g.arc(a, b, 5, 0, 7); g.fill();
   g.fillStyle = '#aaa'; g.font = '10px system-ui'; g.fillText('overview · north up', 6, 12);
 }
+
+function dirWord(d: number) { const a = Math.abs(d); if (a < 22.5) return 'ahead'; if (a > 157.5) return 'behind you'; const side = d < 0 ? 'left' : 'right'; return a < 67.5 ? `ahead-${side}` : a < 112.5 ? `to your ${side}` : `behind-${side}`; }
 
 export function stopTablet() { running = false; clearInterval(timer); timer = undefined; }
 export function isRunning() { return running; }

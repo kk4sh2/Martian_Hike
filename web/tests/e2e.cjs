@@ -93,7 +93,7 @@ const rec = (name, pass, detail) => { results.push({ name, pass, detail }); cons
   // 7. crew: drop tablet, move, interrupt link, restore
   await p.click('#areaSel button[data-area=jezero]'); await p.waitForTimeout(400);
   await p.click('#viewSel button[data-view=tablet]'); await p.click('#tbReset'); await p.waitForTimeout(200);
-  await p.click('[data-tcs=drop]'); await p.click('#tbStart'); await p.waitForTimeout(2500);
+  await p.click('#tbScen'); await p.click('[data-tcs=drop]'); await p.click('#tbStart'); await p.waitForTimeout(2500);
   const s1 = await p.textContent('#tbSide');
   await p.click('[data-tcs=cut]'); await p.waitForTimeout(1500);
   const s2 = await p.textContent('#tbSide');

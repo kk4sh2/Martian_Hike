@@ -123,3 +123,14 @@ label.inp { justify-content: space-between; font-size: 13px; } label.inp input[t
 .srcBody h3 { font-size: 14px; margin: 14px 0 6px; } .srcBody p, .srcBody li { font-size: 13.5px; line-height: 1.45; }
 .kv.wide { grid-template-columns: 120px 1fr; }
 @media (max-width: 900px) { header#top { gap: 8px; overflow-x: auto; } .brand { font-size: 16px; } #netState { display: none; } }
+/* tablet + evidence readability */
+#tabletView .controls { align-items: center; flex-wrap: nowrap; overflow-x: auto; }
+#tabletView .controls button { min-width: 96px; }
+#tabletView .controls label { white-space: nowrap; font-size: 15px; } #tabletView .controls select { min-height: 48px; font-size: 16px; }
+#tabletView .scenRow { position: absolute; left: 12px; right: 12px; bottom: 34px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: rgba(15,17,21,.95); border: 1px solid var(--line); border-radius: 12px; padding: 10px; z-index: 5; }
+#tabletView .scenRow button { min-height: 48px; font-size: 15px; }
+#tabletView .res .big { font-size: 24px; white-space: nowrap; }
+.evTitle { margin: 0 48px 4px 0; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.evLead { margin: 0 0 8px; font-size: 15px; }
+.evActions button { min-height: 48px; }
+details.evMore { border-top: 1px solid var(--line); padding-top: 4px; }
