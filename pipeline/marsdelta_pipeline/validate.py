@@ -5,7 +5,7 @@ import json
 import math
 from pathlib import Path
 
-from .common import ROOT, WEB_DATA, MANIFEST, sha256
+from .common import RAW, ROOT, WEB_DATA, MANIFEST, sha256
 
 FAILS: list[str] = []
 OKS: list[str] = []
@@ -60,6 +60,22 @@ def main() -> int:
     check(meda["status"] in ("available", "unavailable"), f"MEDA status explicit: {meda['status']}")
     if meda["status"] == "unavailable":
         check("sols" not in meda, "no MEDA values when unavailable")
+    md_path = WEB_DATA / "jezero" / "meda_daily.json"
+    if md_path.exists():
+        md = json.loads(md_path.read_text())
+        raw = json.loads((RAW / "meda" / "m20_weather_feed.json").read_text())["sols"] if (RAW / "meda" / "m20_weather_feed.json").exists() else None
+        check(len(md["sols"]) > 0, f"MEDA daily summaries packaged: {len(md['sols'])} sols")
+        if raw is not None:
+            byid = {int(r["sol"]): r for r in raw}
+            for s in md["sols"]:
+                r = byid.get(s["sol"])
+                ok = r is not None and all((r[k] in ("--", None, "")) == (s[f] is None) and (s[f] is None or abs(float(r[k]) - s[f]) < 1e-9)
+                                           for k, f in (("min_temp", "min_air_temp_c"), ("max_temp", "max_air_temp_c"), ("pressure", "pressure_pa")))
+                check(ok, f"MEDA sol {s['sol']} values match NASA feed exactly; gaps kept as gaps")
+        for s in md["sols"]:
+            check(s["station"] is not None and s["station"]["sol_of_fix"] <= s["sol"], f"MEDA sol {s['sol']} station placed from a rover fix on or before that sol")
+    g = WEB_DATA / "globe" / "mars_viking_color_4k.jpg"
+    check(g.exists() and "globe_viking_mdim21" in json.loads((ROOT / "data" / "source_manifest.json").read_text())["sources"], "globe basemap present and recorded in manifest")
     dust = json.loads((WEB_DATA / "dust_context.json").read_text())["areas"]
     check(dust["jezero"]["cell"]["lon_min"] <= 77.4 <= dust["jezero"]["cell"]["lon_max"], "Jezero dust cell contains corridor")
     check(dust["nili"]["cell"]["lon_min"] <= 67.3 <= dust["nili"]["cell"]["lon_max"], "Nili dust cell contains study area")

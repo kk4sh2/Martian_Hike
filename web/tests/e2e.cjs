@@ -34,8 +34,12 @@ const rec = (name, pass, detail) => { results.push({ name, pass, detail }); cons
   const after = await p.textContent('#cBrief');
   rec('Moving the landing pin updates the briefing', before !== after, `pin text changed: ${/Pin: ([^(]+)/.exec(after)?.[1]?.trim()}`);
   const wx = await p.textContent('#cWx');
-  if (/No MEDA observation packaged/.test(wx)) rec('Pin move changes distance to a dated MEDA observation; missing interval explicit', null, 'BLOCKED: no MEDA CSV/label could be retrieved; card states this explicitly instead of showing values');
-  else rec('Weather card shows distance', /Distance to pin/.test(wx), wx.slice(0, 120));
+  const dKm = (t) => (/Distance to pin(\d+\.\d) km/.exec(t.replace(/\s+/g, '')) || /Distance to pin\s*([\d.]+) km/.exec(t) || [])[1];
+  const box2 = await p.locator('.leaflet-marker-draggable').boundingBox();
+  await p.mouse.move(box2.x + box2.width / 2, box2.y + box2.height - 2); await p.mouse.down(); await p.mouse.move(box2.x - 200, box2.y + 40, { steps: 8 }); await p.mouse.up(); await p.waitForTimeout(400);
+  const wx2 = await p.textContent('#cWx');
+  rec('Pin move changes distance to a dated MEDA observation; missing interval explicit', !!dKm(wx) && !!dKm(wx2) && dKm(wx) !== dKm(wx2) && /Sol \d+ \(\d{4}-\d\d-\d\d\)/.test(wx) && /not reported|gap/.test(wx) && /not a forecast/.test(wx),
+    `distance ${dKm(wx)} km → ${dKm(wx2)} km after moving the pin; gaps shown as "not reported"/"gap"; NASA MEDA daily summary`);
 
   // 3. two routes with return legs
   const routes = await p.textContent('#cRoutes');
@@ -71,15 +75,44 @@ const rec = (name, pass, detail) => { results.push({ name, pass, detail }); cons
   // 6. leakage
   await p.click('#areaSel button[data-area=jezero]'); await p.waitForTimeout(600);
   const jt = await panel(); const jl = await p.textContent('#legend');
-  rec('Nili Patera evidence never appears in Jezero', !/NP-0|PSP_00|PIA15680/.test(jt + jl) && /No repeat-imagery change analysis covers this mission area/.test(await p.textContent('#decision')), 'Jezero panel/legend free of Nili IDs; Jezero routes report "no change analysis"');
+  rec('Nili Patera evidence never appears in Jezero', !/NP-0|PSP_00|PIA15680/.test(jt + jl) && /no change analysis here/.test(await p.textContent('#cRoutes')) && (await p.textContent('#decision')).trim() === '', 'Jezero panel/legend free of Nili IDs; Jezero routes report "no change analysis here"; no alert banner');
   await p.click('#areaSel button[data-area=nili]'); await p.waitForTimeout(600);
   const nt = await panel();
   rec('Jezero surface weather never appears in Nili', /No surface weather is shown for Nili Patera/.test(nt) && !/MEDA station/.test(nt), 'Nili card states no surface weather');
 
+  // 6b. decluttered header, hide panel, organised sources
+  const hdr = await p.textContent('#top');
+  await p.click('#panelBtn'); await p.waitForTimeout(300);
+  const hiddenOk = await p.evaluate(() => getComputedStyle(document.querySelector('#panel')).display === 'none' && document.querySelector('#map').getBoundingClientRect().width > innerWidth - 5);
+  await p.click('#panelBtn'); await p.waitForTimeout(300);
+  const shownOk = await p.evaluate(() => getComputedStyle(document.querySelector('#panel')).display !== 'none');
+  rec('Side panel can be hidden and shown; header has no prototype label', hiddenOk && shownOk && !/prototype/i.test(hdr), `hidden: map full width ${hiddenOk}; shown again ${shownOk}; header "${hdr.replace(/\s+/g, ' ').trim()}"`);
+  await p.click('#sourcesBtn');
+  const tabs = await p.$$eval('[data-st]', (bs) => bs.map((b) => b.textContent));
+  await p.click('[data-st=change]'); const chg = await p.textContent('#srcBody');
+  await p.click('[data-st=datasets]'); const ds = await p.textContent('#srcBody');
+  rec('Sources tab is organised into sections with the moved details', tabs.length >= 6 && /held back for checking/.test(chg) && /PIA15680/.test(chg) && /Jezero Crater/.test(ds) && /Nili Patera/.test(ds), `tabs: ${tabs.join(', ')}`);
+  await p.click('#modal .close');
+
+  // 6c. globe distance and survival tools
+  await p.click('#viewSel button[data-view=globe]'); await p.waitForTimeout(2500);
+  const gb = await p.locator('#globeCanvas').boundingBox();
+  await p.mouse.click(gb.x + gb.width * 0.45, gb.y + gb.height * 0.45); await p.waitForTimeout(200); await p.mouse.click(gb.x + gb.width * 0.55, gb.y + gb.height * 0.6); await p.waitForTimeout(500);
+  const gtxt = await p.textContent('#globeCard');
+  const gm = /Point A([\d.]+)° ([NS]), ([\d.]+)° ([EW])Point B([\d.]+)° ([NS]), ([\d.]+)° ([EW])Distance over the surface([\d.]+) km/.exec(gtxt.replace(/\s+(?=Point|Distance)/g, ''));
+  let gOk = false, gDet = gtxt.slice(0, 160);
+  if (gm) { const sg = (v, h) => (h === 'S' || h === 'W' ? -1 : 1) * +v; const la1 = sg(gm[1], gm[2]), lo1 = sg(gm[3], gm[4]), la2 = sg(gm[5], gm[6]), lo2 = sg(gm[7], gm[8]);
+    const r = Math.PI / 180; const a = Math.sin((la2 - la1) * r / 2) ** 2 + Math.cos(la1 * r) * Math.cos(la2 * r) * Math.sin((lo2 - lo1) * r / 2) ** 2; const ref = 2 * 3389.5 * Math.asin(Math.sqrt(a));
+    gOk = Math.abs(ref - +gm[9]) <= Math.max(1, ref * 0.002); gDet = `A ${la1},${lo1} B ${la2},${lo2}: shown ${gm[9]} km, independent check ${ref.toFixed(1)} km`; }
+  rec('3D globe: two picked points give the great-circle distance on Mars', gOk, gDet);
+  await p.click('#viewSel button[data-view=planner]'); await p.waitForTimeout(300);
+  const sv = await p.textContent('#cSurv');
+  rec('Survival check shows reserve margin, turn-back point, shelter, daylight and dust', /spare above the reserve|short of the reserve/.test(sv) && /Turn back by|No turn-back point/.test(sv) && /to shelter/.test(sv) && /sunset/.test(sv) && /Dust/.test(sv), sv.replace(/\s+/g, ' ').slice(0, 220));
+
   // 7. crew: drop tablet, move, interrupt link, restore
   await p.click('#areaSel button[data-area=jezero]'); await p.waitForTimeout(400);
   await p.click('#viewSel button[data-view=tablet]'); await p.click('#tbReset'); await p.waitForTimeout(200);
-  await p.click('[data-tcs=drop]'); await p.click('#tbStart'); await p.waitForTimeout(2500);
+  await p.click('#tbScen'); await p.click('[data-tcs=drop]'); await p.click('#tbStart'); await p.waitForTimeout(2500);
   const s1 = await p.textContent('#tbSide');
   await p.click('[data-tcs=cut]'); await p.waitForTimeout(1500);
   const s2 = await p.textContent('#tbSide');
@@ -92,6 +125,10 @@ const rec = (name, pass, detail) => { results.push({ name, pass, detail }); cons
   rec('Empty/unconfirmed suit reports location with wearer uncertainty', /SUIT-S3 ● LIVE/.test(s4) && /Wearer unconfirmed/.test(s4), /SUIT-S3[^…]*/.exec(s4)?.[0]);
   await p.click('#tbPause');
 
+  await p.click('#tbEmerg'); await p.waitForTimeout(400);
+  const em = await p.textContent('#tbInstr'); const lg = await p.evaluate(() => JSON.parse(localStorage.getItem('marsdelta.mission.v1') || '{}').log?.slice(-3).map((x) => x.text).join(' | ') ?? '');
+  rec('Emergency return gives a route home with distance, time and oxygen needed', /Emergency return to habitat/.test(em) && /min/.test(em) && /O₂/.test(em), em.replace(/\s+/g, ' '));
+  await p.click('#tbEmerg');
   // 8. touch targets
   const small = await p.$$eval('#tabletView button', (bs) => bs.filter((b) => b.offsetParent && b.getBoundingClientRect().height < 44).map((b) => b.textContent.trim()));
   rec('Tablet touch targets ≥ 44 px', small.length === 0, small.length ? `small: ${small.join(', ')}` : 'all tablet buttons ≥ 44 px tall');
@@ -106,10 +143,15 @@ const rec = (name, pass, detail) => { results.push({ name, pass, detail }); cons
   // 9. guided Nili demo
   await p.click('#viewSel button[data-view=planner]');
   await p.click('#demoBtn'); await p.click('#dN'); await p.waitForTimeout(800);
-  for (let i = 0; i < 6; i++) { await p.click('#dNext'); await p.waitForTimeout(i === 3 ? 2500 : 900); }
+  for (let i = 0; i < 12 && (await p.textContent('#dNext')) !== 'Finish'; i++) { await p.click('#dNext'); await p.waitForTimeout(1500); }
   const logTxt = await p.textContent('#cLog');
   rec('Guided Nili demo runs end to end and logs the decision', /Acknowledged crossing of NP-/.test(logTxt) && /Bypass search/.test(logTxt) && /repeat observation PSP_005684_1890/.test(logTxt), 'log contains simulated receipt, bypass result and acknowledgement');
   await p.click('#dNext').catch(() => {});
+  await p.click('#demoBtn'); await p.click('#dT'); await p.waitForTimeout(2000);
+  const tourSeen = []; for (let i = 0; i < 12; i++) { tourSeen.push((await p.textContent('#demo h4')).split('·')[0].trim()); if ((await p.textContent('#dNext')) === 'Finish') break; await p.click('#dNext'); await p.waitForTimeout(1900); if (/How far apart/.test(await p.textContent('#demo h4'))) tourSeen.push('dist:' + ((await p.textContent('#globeDist').catch(() => '')) || 'none')); }
+  const hlTxt = await p.$$eval('.gHl', (e) => e.map((x) => x.textContent));
+  rec('Tour of Mars demo flies the globe to highlighted places and measures Jezero to Nili', tourSeen.length >= 8 && tourSeen.some((t) => /^dist:\d/.test(t)) && hlTxt.length <= 1, tourSeen.join(' → '));
+  await p.click('#dNext').catch(() => {}); await p.click('#viewSel button[data-view=planner]');
 
   // 10. offline after caching
   await p.goto(BASE, { waitUntil: 'networkidle' });

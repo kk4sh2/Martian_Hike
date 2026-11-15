@@ -22,6 +22,8 @@ Status as of 2026-11-14. No earlier repository or Jezero Traverse simulator exis
   - Banner, evidence viewer (blink, swipe, side by side, texture difference), and Acknowledge / Manual review / Bypass actions, all written to the mission log.
   - The success probability is never changed by an intersection.
 - **Crew tracking and the tablet.** Simulated trilateration, a separate tablet state, and all three demonstration cases. Heading-up landscape tablet with start, pause, resume and reset. Guided demos for both areas.
+- **3D Mars globe.** Viking MDIM 2.1 colour mosaic (NASA Mars Trek tiles, stitched at 4096×2048). Two tapped points give the great-circle distance on a 3,389.5 km sphere; the acceptance test checks it against an independent haversine computation. Jezero and Nili markers open those sites in the planner.
+- **Survival tools.** Reserve margin, turn-back point (at a configurable worst-case use factor), nearest shelter, daylight margin against MEDA sunset, and a regional dust advisory from the LMD climatology, which is relative to its own record and not a forecast. On the tablet: countdowns to the oxygen and battery reserve, distance to the turn-back point and shelter, and an emergency return. In Jezero the emergency route is terrain-checked; in Nili it is a straight line. All are estimates from the simulated suit model.
 - **Offline.** The service worker precaches the whole site and its data (11.5 MB). The offline reload passed in Playwright.
 - **Acceptance tests.** 18 of 19 pass and 1 is blocked (MEDA).
 
@@ -53,11 +55,7 @@ Every file has its URL and SHA-256 hash recorded in `data/source_manifest.json`.
 
 ## 4. What is blocked
 
-- **MEDA weather (Jezero).**
-  - The PDS Atmospheres node failed TLS from the build environment, and bypassing certificate checks was not attempted.
-  - The weather card therefore says MEDA is not packaged and shows no values.
-  - Acceptance test 3 (distance from the pin to a dated MEDA observation, with gaps shown explicitly) is **BLOCKED**.
-  - `meda.py` (CSV and PDS4 label parsing, gap listing, station placement) is written but has not run on real data. To unblock: put a MEDA CSV and its `.xml` label in `data/raw/meda/`, then run `python3 -m marsdelta_pipeline meda && cd ../web && npm run build`.
+- **Full-resolution MEDA weather (Jezero).** The PDS Atmospheres archive still fails TLS from the build environment, and certificate checks were not bypassed. As a partial unblock, the pipeline now captures NASA's published MEDA daily summaries: low and high temperature, pressure, sunrise and sunset for the latest 7 sols NASA publishes (sols 1127–1133, 2024). Gaps stay gaps. The station is placed at the rover's localization for each sol, and the weather card shows its distance from the landing pin. These are not the sols of the planned walk, and the card says so. `meda.py` still ingests full-resolution CSVs if they are placed in `data/raw/meda/`.
 - **Nili bypass.** There is no terrain model for the Nili crop, so no bypass is computed. The UI explains why instead of drawing an unchecked path.
 - **Ripple displacement.** It is unresolved because of ripple-wavelength aliasing and weak correlation peaks. This is a limit of the method, not a missing feature. No value is shown.
 - **Pull requests.** No GitHub repository was attached, so the work is a local git repository and has not been delivered as PRs.

@@ -14,9 +14,9 @@ function img(name: string): Promise<HTMLImageElement> {
 }
 
 const CLS_TEXT: Record<string, string> = {
-  Verified: 'Verified: specific corroborating evidence exists for the claimed phenomenon at this spot.',
-  'Requires Review': 'Requires Review: a candidate difference survives processing; geological interpretation remains open.',
-  Uncertain: 'Uncertain: alignment, lighting, shadow, texture or coverage limits the reliability of this difference.',
+  Verified: 'NASA has documented ripple movement at this spot, and MarsDelta found the change independently.',
+  'Requires Review': 'The ground looks different between the two images. A scientist should check what it means.',
+  Uncertain: 'Probably lighting or image alignment rather than real change.',
 };
 
 export async function openEvidence(regionId: string, crossing?: Crossing) {
@@ -33,53 +33,55 @@ export async function openEvidence(regionId: string, crossing?: Crossing) {
        ${disp.diagnostic_unfiltered_offsets ? `<br><small>Diagnostic only: unfiltered best-match offsets have median ${disp.diagnostic_unfiltered_offsets.median_offset_m} m with weak peaks (median NCC ${disp.diagnostic_unfiltered_offsets.median_peak_ncc} vs runner-up ${disp.diagnostic_unfiltered_offsets.median_second_peak_ncc}) against a ${e.ripple_wavelength_m?.wavelength_m} m ripple wavelength. That is not a measurement.</small>` : ''}</div>`;
   const reg = e.registration;
   const ack = state.areas.nili.acknowledged.includes(r.id);
-  const crossTxt = crossing ? `<div class="warnbox"><b>Route crossing</b>: ${crossing.length_m.toFixed(1)} m of the walk, from ${crossing.startAlong_m.toFixed(0)} m to ${crossing.endAlong_m.toFixed(0)} m along the route (leg ${crossing.legIndex + 1}).<br>
-      Entry ${fmtLonLat('nili', ...crossing.start)} → exit ${fmtLonLat('nili', ...crossing.end)}</div>` : '';
+  const crossTxt = crossing ? `<div class="warnbox"><b>Your route crosses this area for ${crossing.length_m.toFixed(0)} m</b>, from ${crossing.startAlong_m.toFixed(0)} m to ${crossing.endAlong_m.toFixed(0)} m after leaving the habitat.</div>` : '';
+  const d = (k: 'before' | 'after') => ob[k].label.START_TIME?.slice(0, 10);
   const body = `
-    <h2 style="margin:0 40px 6px 0">Change evidence · <code>${r.id}</code> <span class="tag ${r.classification.split(' ')[0]}">${r.classification}</span> <span class="tag derived">derived finding</span></h2>
-    <div class="note">${CLS_TEXT[r.classification]}</div>
+    <h2 class="evTitle">Changed ground · Area ${r.id.slice(-3)} <span class="tag ${r.classification.split(' ')[0]}">${r.classification}</span></h2>
+    <p class="evLead">${CLS_TEXT[r.classification]}</p>
     ${crossTxt}
     <div class="evGrid">
       <div>
         <div class="row" role="group" aria-label="Comparison mode">
           <button data-mode="blink" class="on">Blink</button><button data-mode="swipe">Swipe</button><button data-mode="side">Side by side</button>
-          <label class="row" style="margin-left:auto"><input type="checkbox" id="evRaw"> show before image <i>without</i> fine bedrock registration</label>
         </div>
         <div id="evStage"></div>
         <div class="row"><button id="evZoomIn">＋ Zoom</button><button id="evZoomOut">－ Zoom</button><button id="evOutline" class="on">Outline on</button><button id="evDiff">Texture difference</button>
           <span class="note" id="evNow"></span></div>
-        <div class="note">Before: ${ob.before.id} (${ob.before.label.START_TIME?.slice(0, 10)}, incidence ${(+ob.before.label.INCIDENCE_ANGLE.split(' ')[0]).toFixed(1)}°) ·
-          After: ${ob.after.id} (${ob.after.label.START_TIME?.slice(0, 10)}, incidence ${(+ob.after.label.INCIDENCE_ANGLE.split(' ')[0]).toFixed(1)}°). Both are RED map-projected products at 0.25 m/pixel, shown north up.
-          Credit: ${esc(ob.after.credit)}. Historical observations, not live imagery.</div>
+        <div class="note">Before ${d('before')} · after ${d('after')} (${e.interval_days} days apart). HiRISE orbital images, north up. ${esc(ob.after.credit)}.</div>
       </div>
       <div>
-        <dl class="kv">
-          <dt>Region centroid</dt><dd>${r.centroid_lonlat[1].toFixed(5)}° N, ${r.centroid_lonlat[0].toFixed(5)}° E</dd>
-          <dt>Area</dt><dd>${r.area_m2.toLocaleString()} m²</dd>
-          <dt>Interval</dt><dd>${ob.before.label.START_TIME?.slice(0, 10)} → ${ob.after.label.START_TIME?.slice(0, 10)} (${e.interval_days} days)</dd>
-          <dt>Why this class</dt><dd>${esc(r.explanation)}</dd>
-          <dt>Texture</dt><dd>mean local correlation ${r.mean_local_ncc} (threshold ${e.parameters.change_ncc_threshold}); dune fraction ${(r.dune_fraction * 100).toFixed(0)}%</dd>
-          <dt>Alignment</dt><dd>held-out bedrock residual ${reg.heldout_rms_px.toFixed(2)} px = ${reg.heldout_rms_m.toFixed(2)} m RMS (${reg.n_heldout} held-out of ${reg.n_controls_total} controls); before fine registration ${reg.pre_fine_heldout_rms_px.toFixed(1)} px</dd>
-          <dt>Source pixels</dt><dd><small>${r.source_pixels.after_product} rows/cols ${r.source_pixels.after_window_rowcol.join(', ')}<br>${r.source_pixels.before_product} ≈ ${r.source_pixels.before_window_rowcol_approx.join(', ')}</small></dd>
-        </dl>
-        <h4>Displacement</h4>${dispHtml}
-        <h4>NASA documented site-level finding <span class="tag obs">published</span></h4>
-        <div class="note" style="color:var(--text)">${esc(e.nasa_reference.statement)}</div>
-        <img src="${url('nili/PIA15680.gif')}" alt="NASA PIA15680 blink animation" style="width:100%;border-radius:8px">
-        <div class="note">NASA PIA15680 (${esc(e.nasa_reference.credit)}). We located this frame in both HiRISE products by template matching
-          (scores ${e.nasa_reference.located_in_products.before.score} / ${e.nasa_reference.located_in_products.after.score}); its footprint is drawn on the map.
-          This is NASA's site-level finding, kept separate from MarsDelta's polygon-level classes. A changed ripple is not automatically an astronaut hazard.
-          <a href="${e.nasa_reference.page}" target="_blank" rel="noopener">Photojournal page</a></div>
-        <h4>Sources</h4>
-        <div class="note">${(['before', 'after'] as const).map((k) => `<a href="${ob[k].page}" target="_blank" rel="noopener">${ob[k].id}</a> (<a href="${ob[k].jp2_url}">RED JP2</a>, <a href="${ob[k].label_url}">label</a>, sha256 ${ob[k].sha256.slice(0, 12)}…)`).join('<br>')}
-          <br>Pipeline v${e.pipeline_version}, ${e.precomputed ? 'precomputed result (not re-run in the browser)' : ''} generated ${e.generated}.</div>
-        <h4>Planner decision</h4>
-        <div class="row">
-          <button id="evAck" ${ack ? 'disabled' : ''} class="primary">${ack ? 'Acknowledged' : 'Acknowledge crossing'}</button>
-          <button id="evReview">Request manual review</button>
-          <button id="evBypass">Look for a bypass</button>
+        <h4 style="margin-top:0">What do you want to do?</h4>
+        <div class="row evActions">
+          <button id="evAck" ${ack ? 'disabled' : ''} class="primary">${ack ? 'Acknowledged' : 'Acknowledge and continue'}</button>
+          <button id="evBypass">Find a way around</button>
+          <button id="evReview">Ask for review</button>
         </div>
         <div id="evDecision"></div>
+        <dl class="kv">
+          <dt>Why</dt><dd>${esc(r.explanation)}</dd>
+          <dt>Size</dt><dd>${r.area_m2.toLocaleString()} m²</dd>
+          <dt>Movement</dt><dd>${disp.status === 'measured' ? `${disp.magnitude_m} ± ${disp.uncertainty_m} m over ${e.interval_days} days` : 'Could not be measured reliably'}</dd>
+        </dl>
+        <details class="evMore"><summary>NASA's finding at this site</summary>
+          <div class="note" style="color:var(--text)">${esc(e.nasa_reference.statement)}</div>
+          <img src="${url('nili/PIA15680.gif')}" alt="NASA PIA15680 blink animation" style="width:100%;border-radius:8px">
+          <div class="note">NASA PIA15680 (${esc(e.nasa_reference.credit)}). Kept separate from MarsDelta's own classes. <a href="${e.nasa_reference.page}" target="_blank" rel="noopener">Photojournal page</a></div>
+        </details>
+        <details class="evMore"><summary>Technical details</summary>
+          <dl class="kv">
+            <dt>Region ID</dt><dd><code>${r.id}</code></dd>
+            <dt>Centre</dt><dd>${r.centroid_lonlat[1].toFixed(5)}° N, ${r.centroid_lonlat[0].toFixed(5)}° E</dd>
+            ${crossing ? `<dt>Crossing</dt><dd>leg ${crossing.legIndex + 1}; entry ${fmtLonLat('nili', ...crossing.start)} → exit ${fmtLonLat('nili', ...crossing.end)}</dd>` : ''}
+            <dt>Texture</dt><dd>mean local correlation ${r.mean_local_ncc} (threshold ${e.parameters.change_ncc_threshold}); dune fraction ${(r.dune_fraction * 100).toFixed(0)}%</dd>
+            <dt>Alignment</dt><dd>held-out bedrock residual ${reg.heldout_rms_px.toFixed(2)} px = ${reg.heldout_rms_m.toFixed(2)} m RMS (${reg.n_heldout} held-out of ${reg.n_controls_total} controls); before fine registration ${reg.pre_fine_heldout_rms_px.toFixed(1)} px</dd>
+            <dt>Images</dt><dd>${ob.before.id} (incidence ${(+ob.before.label.INCIDENCE_ANGLE.split(' ')[0]).toFixed(1)}°), ${ob.after.id} (incidence ${(+ob.after.label.INCIDENCE_ANGLE.split(' ')[0]).toFixed(1)}°); RED map-projected, 0.25 m/px</dd>
+            <dt>Source pixels</dt><dd><small>${r.source_pixels.after_product} rows/cols ${r.source_pixels.after_window_rowcol.join(', ')}<br>${r.source_pixels.before_product} ≈ ${r.source_pixels.before_window_rowcol_approx.join(', ')}</small></dd>
+          </dl>
+          ${dispHtml}
+          <label class="row"><input type="checkbox" id="evRaw"> Show the before image without fine bedrock alignment</label>
+          <div class="note">${(['before', 'after'] as const).map((k) => `<a href="${ob[k].page}" target="_blank" rel="noopener">${ob[k].id}</a> (<a href="${ob[k].jp2_url}">RED JP2</a>, <a href="${ob[k].label_url}">label</a>, sha256 ${ob[k].sha256.slice(0, 12)}…)`).join('<br>')}
+            <br>Pipeline v${e.pipeline_version}, ${e.precomputed ? 'precomputed (not re-run in the browser), ' : ''}generated ${e.generated}.</div>
+        </details>
       </div>
     </div>`;
   const root = openModal(body);
@@ -98,12 +100,12 @@ export async function openEvidence(regionId: string, crossing?: Crossing) {
     if (!state.areas.nili.acknowledged.includes(r.id)) state.areas.nili.acknowledged.push(r.id);
     log('decision', `Acknowledged crossing of ${r.id} (${r.classification})${crossing ? ` at ${crossing.startAlong_m.toFixed(0)}-${crossing.endAlong_m.toFixed(0)} m` : ''}. Finding retained in log; success estimate unchanged by the intersection itself.`, false, 'nili');
     (ev.target as HTMLButtonElement).disabled = true; (ev.target as HTMLButtonElement).textContent = 'Acknowledged';
-    dec.innerHTML = `<div class="okbox">Logged. The crossing stays visible on the map and in the mission log.</div>`;
+    dec.innerHTML = `<div class="okbox">Logged. The crossing stays marked on the map and in the mission log.</div>`;
   };
   root.querySelector<HTMLButtonElement>('#evReview')!.onclick = () => {
     if (!state.areas.nili.reviewRequested.includes(r.id)) state.areas.nili.reviewRequested.push(r.id);
     log('decision', `Manual review requested for ${r.id}. Missing evidence: terrain model for the crop; reliable ripple displacement; any in-situ observation.`, false, 'nili');
-    dec.innerHTML = `<div class="warnbox">Manual review requested and logged. Evidence still missing: no DTM is packaged for this crop (slope/footing unknown), displacement is unresolved, and no in-situ observation exists.</div>`;
+    dec.innerHTML = `<div class="warnbox">Review requested and logged. Still unknown here: slope and footing (no terrain model), how far the ripples moved, and what the ground is like up close.</div>`;
   };
   root.querySelector<HTMLButtonElement>('#evBypass')!.onclick = () => {
     const res = findBypass();

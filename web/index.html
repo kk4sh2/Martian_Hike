@@ -10,19 +10,21 @@
 </head>
 <body>
   <header id="top">
-    <div class="brand"><span class="logo">Δ</span> MarsDelta <small>mission planner · prototype</small></div>
+    <div class="brand"><span class="logo">Δ</span> MarsDelta</div>
     <div class="seg" id="areaSel" role="tablist" aria-label="Mission area">
-      <button data-area="jezero" role="tab">A · Jezero Crater<small>science walk</small></button>
-      <button data-area="nili" role="tab">B · Nili Patera<small>change investigation</small></button>
+      <button data-area="jezero" role="tab">Jezero Crater</button>
+      <button data-area="nili" role="tab">Nili Patera</button>
     </div>
     <div class="seg" id="viewSel" role="tablist" aria-label="View">
       <button data-view="planner" role="tab">Planner</button>
       <button data-view="tablet" role="tab">Tablet</button>
+      <button data-view="globe" role="tab">Globe</button>
     </div>
     <div class="topActions">
-      <button id="demoBtn" class="primary">▶ Guided demo</button>
-      <button id="sourcesBtn">Sources</button>
       <span id="netState" class="pill" title="Offline readiness"></span>
+      <button id="demoBtn" class="primary">▶ Demo</button>
+      <button id="sourcesBtn">Sources</button>
+      <button id="panelBtn" aria-pressed="false" title="Hide or show the side panel">Hide panel</button>
     </div>
   </header>
   <main id="app">
@@ -31,6 +33,7 @@
       <aside id="panel"></aside>
     </section>
     <section id="tabletView" hidden></section>
+    <section id="globeView" hidden></section>
   </main>
   <div id="modal" class="modal" hidden><div class="modalBox"><button class="close" aria-label="Close">✕</button><div class="modalBody"></div></div></div>
   <div id="demo" class="demoBar" hidden></div>

@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-14T09:35:11.413Z",
+  "date": "2026-11-14T13:03:16.220Z",
   "base": "http://localhost:4173/",
   "results": [
     {
@@ -14,13 +14,13 @@
     },
     {
       "name": "Pin move changes distance to a dated MEDA observation; missing interval explicit",
-      "pass": null,
-      "detail": "BLOCKED: no MEDA CSV/label could be retrieved; card states this explicitly instead of showing values"
+      "pass": true,
+      "detail": "distance 5.5 km → 5.2 km after moving the pin; gaps shown as \"not reported\"/\"gap\"; NASA MEDA daily summary"
     },
     {
       "name": "Two Jezero routes to the same objective both include the return leg",
       "pass": true,
-      "detail": "1.56 km incl. return1.62 km incl. return"
+      "detail": "1.56 km incl. return1.62 km incl. returnWalking time1 h 55 min1 h 56 minClimb37 m35 mSteepest12° leg 311° leg 3O₂ / battery at return88% / 84%88% / 84%Changed groundno change analysis hereno change analysis hereWhy they differ: leg 3 (Layered delta outcrop → Habitat ). The gentle route takes +0.6 min and +35 m there, and its steepest slope is 11° instead of 12°."
     },
     {
       "name": "Success estimate responds to resources and is reproducible",
@@ -35,12 +35,12 @@
     {
       "name": "Intersecting / non-intersecting / out-of-coverage routes give different, correct results",
       "pass": true,
-      "detail": "{\"crossing\":\"Route impact · A. Direct to north contact (crosses the dune)Inspect the highlighted crossings. Repeat orbital imagery shows a candidate surface difference here. Inspect 010 · 194-231 m (36.8 m, leg 1)Inspect 010 · 531-56\",\"south\":\"Route impact · B. South bedrock survey (stays on bedrock)The whole route lies inside the change-analysis coverage and crosses no candidate surface difference. Covered by analysis: 182 m of 182 m\",\"east\":\"Route impact · C. East traverse (leaves analysed coverage)No candidate differences on the 299 m inside coverage; 301 m of the walk has no repeat-imagery analysis. Covered by analysis: 299 m of 600 m\"}"
+      "detail": "{\"crossing\":\"Route impact · Direct to north contactInspect the highlighted crossings. Repeat orbital imagery shows a candidate surface difference here. Inspect crossing at 194-231 mInspect crossing at 531-568 m Covered by analysis: 7\",\"south\":\"Route impact · South bedrock surveyThe whole route lies inside the change-analysis coverage and crosses no candidate surface difference. Covered by analysis: 182 m of 182 m\",\"east\":\"Route impact · East traverseNo candidate differences on the 299 m inside coverage; 301 m of the walk has no repeat-imagery analysis. Covered by analysis: 299 m of 600 m\"}"
     },
     {
       "name": "Nili Patera evidence never appears in Jezero",
       "pass": true,
-      "detail": "Jezero panel/legend free of Nili IDs; Jezero routes report \"no change analysis\""
+      "detail": "Jezero panel/legend free of Nili IDs; Jezero routes report \"no change analysis here\"; no alert banner"
     },
     {
       "name": "Jezero surface weather never appears in Nili",
@@ -48,19 +48,44 @@
       "detail": "Nili card states no surface weather"
     },
     {
+      "name": "Side panel can be hidden and shown; header has no prototype label",
+      "pass": true,
+      "detail": "hidden: map full width true; shown again true; header \"Δ MarsDelta Jezero Crater Nili Patera Planner Tablet Globe ✓ Works offline ▶ Demo Sources Hide panel\""
+    },
+    {
+      "name": "Sources tab is organised into sections with the moved details",
+      "pass": true,
+      "detail": "tabs: Overview, Datasets, Change analysis, Planning model, Weather & dust, Terrain, Crew tracking"
+    },
+    {
+      "name": "3D globe: two picked points give the great-circle distance on Mars",
+      "pass": true,
+      "detail": "A 19.86,62.69 B 4.63,80.83: shown 1379 km, independent check 1379.8 km"
+    },
+    {
+      "name": "Survival check shows reserve margin, turn-back point, shelter, daylight and dust",
+      "pass": true,
+      "detail": "Survival checkmodel🫁81% spare above the reserveBack with O₂ 93% and battery 91% (keep 10%)↩No turn-back point on this routeEven at 1.5× the planned battery use you could retrace the whole outbound walk.🏠381 m to shelte"
+    },
+    {
       "name": "Tablet left behind vs suit fix",
       "pass": true,
-      "detail": "TAB-1 is not with its wearer. It was left at a fixed spot (purple box). The position shown is SUIT-A1's suit beacon, 39 m away."
+      "detail": "TAB-1 is not with its wearer. It was left behind (purple box). The arrow shows SUIT-A1's suit beacon, 39 m away."
     },
     {
       "name": "Suit link loss freezes last fix and shows age; restore resumes live",
       "pass": true,
-      "detail": "SUIT-B2 ○ LAST KNOWN · 57 m @ 70° (rel 160°)last contact 1:33 ago ·  → SUIT-B2 ● LIVE · 108 m @ 95° (rel -146°)"
+      "detail": "SUIT-B2 ○ LAST KNOWN · Astronaut B57 m behind you · last contact 1:33 ago ·  → SUIT-B2 ● LIVE · Astronaut B108 m behind-left · "
     },
     {
       "name": "Empty/unconfirmed suit reports location with wearer uncertainty",
       "pass": true,
-      "detail": "SUIT-S3 ● LIVE · 85 m @ 69° (rel -156°)±1.6 m · Wearer unconfirmed: the beacon reports where the SUIT is. A beacon alone cannot "
+      "detail": "SUIT-S3 ● LIVE · Spare suit85 m behind-left · ±1.6 mWearer unconfirmed: shows where the suit is, not that someone is in it\n"
+    },
+    {
+      "name": "Emergency return gives a route home with distance, time and oxygen needed",
+      "pass": true,
+      "detail": "⚠Emergency return to habitat89 m · about 3 min · needs ~1% O₂ · follow the red dashed route"
     },
     {
       "name": "Tablet touch targets ≥ 44 px",

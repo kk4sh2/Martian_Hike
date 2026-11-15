@@ -1,0 +1,143 @@
+{
+  "schema": "marsdelta.meda_daily.v1",
+  "source": "https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json",
+  "retrieved": "2026-11-14T12:53:39+00:00",
+  "sha256": "9ff9db7675b5165e6d0547f9b86b75cea2cd1badfd27ea5aec4fe6956a47ac35",
+  "instrument": "MEDA (Mars Environmental Dynamics Analyzer), Perseverance rover",
+  "note": "Daily summary values as published by NASA. '--' in the feed is kept as missing. Archived measurements, not a forecast.",
+  "sols": [
+    {
+      "sol": 1127,
+      "earth_date": "2024-04-21",
+      "ls_deg": 240.202,
+      "season": "late autumn",
+      "min_air_temp_c": null,
+      "max_air_temp_c": null,
+      "pressure_pa": null,
+      "sunrise_lmst": "06:13:15",
+      "sunset_lmst": "17:11:36",
+      "station": {
+        "sol_of_fix": 1124,
+        "rmc": "51_5030",
+        "lon": 77.32022099,
+        "lat": 18.48951441,
+        "x": -4766.9,
+        "y": 2194.0
+      }
+    },
+    {
+      "sol": 1128,
+      "earth_date": "2024-04-22",
+      "ls_deg": 240.852,
+      "season": "late autumn",
+      "min_air_temp_c": null,
+      "max_air_temp_c": null,
+      "pressure_pa": null,
+      "sunrise_lmst": "06:14:03",
+      "sunset_lmst": "17:11:57",
+      "station": {
+        "sol_of_fix": 1124,
+        "rmc": "51_5030",
+        "lon": 77.32022099,
+        "lat": 18.48951441,
+        "x": -4766.9,
+        "y": 2194.0
+      }
+    },
+    {
+      "sol": 1129,
+      "earth_date": "2024-04-23",
+      "ls_deg": 241.503,
+      "season": "late autumn",
+      "min_air_temp_c": null,
+      "max_air_temp_c": null,
+      "pressure_pa": 774.0,
+      "sunrise_lmst": "06:14:52",
+      "sunset_lmst": "17:12:18",
+      "station": {
+        "sol_of_fix": 1129,
+        "rmc": "52_0",
+        "lon": 77.32021519,
+        "lat": 18.48951164,
+        "x": -4767.2,
+        "y": 2193.9
+      }
+    },
+    {
+      "sol": 1130,
+      "earth_date": "2024-04-24",
+      "ls_deg": 242.153,
+      "season": "late autumn",
+      "min_air_temp_c": -77.3,
+      "max_air_temp_c": -23.2,
+      "pressure_pa": 777.1,
+      "sunrise_lmst": "06:15:41",
+      "sunset_lmst": "17:12:41",
+      "station": {
+        "sol_of_fix": 1129,
+        "rmc": "52_0",
+        "lon": 77.32021519,
+        "lat": 18.48951164,
+        "x": -4767.2,
+        "y": 2193.9
+      }
+    },
+    {
+      "sol": 1131,
+      "earth_date": "2024-04-25",
+      "ls_deg": 242.804,
+      "season": "late autumn",
+      "min_air_temp_c": -79.2,
+      "max_air_temp_c": -17.0,
+      "pressure_pa": 774.9,
+      "sunrise_lmst": "06:16:29",
+      "sunset_lmst": "17:13:03",
+      "station": {
+        "sol_of_fix": 1131,
+        "rmc": "52_120",
+        "lon": 77.32006369,
+        "lat": 18.48938552,
+        "x": -4775.7,
+        "y": 2186.4
+      }
+    },
+    {
+      "sol": 1132,
+      "earth_date": "2024-04-26",
+      "ls_deg": 243.455,
+      "season": "late autumn",
+      "min_air_temp_c": -77.9,
+      "max_air_temp_c": -23.4,
+      "pressure_pa": 774.1,
+      "sunrise_lmst": "06:17:18",
+      "sunset_lmst": "17:13:27",
+      "station": {
+        "sol_of_fix": 1131,
+        "rmc": "52_120",
+        "lon": 77.32006369,
+        "lat": 18.48938552,
+        "x": -4775.7,
+        "y": 2186.4
+      }
+    },
+    {
+      "sol": 1133,
+      "earth_date": "2024-04-27",
+      "ls_deg": 244.106,
+      "season": "late autumn",
+      "min_air_temp_c": -79.3,
+      "max_air_temp_c": -24.7,
+      "pressure_pa": 778.9,
+      "sunrise_lmst": "06:18:07",
+      "sunset_lmst": "17:13:51",
+      "station": {
+        "sol_of_fix": 1131,
+        "rmc": "52_120",
+        "lon": 77.32006369,
+        "lat": 18.48938552,
+        "x": -4775.7,
+        "y": 2186.4
+      }
+    }
+  ]
+}

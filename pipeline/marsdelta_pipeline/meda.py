@@ -202,3 +202,38 @@ def _eqf(v, m):
 
 if __name__ == "__main__":
     main()
+
+
+FEED_URL = "https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json"
+
+
+def daily_feed():
+    """NASA's published MEDA daily summaries (the feed behind mars.nasa.gov/mars2020/weather).
+
+    The feed only carries the most recent sols. We snapshot what it returns at build time, keep '--' as an explicit
+    gap, and place the station at the rover's localization for that sol. Values are never filled in or interpolated.
+    """
+    from .common import download
+    dest = RAW / "meda" / "m20_weather_feed.json"
+    download(FEED_URL, dest, key="mars2020_weather_feed", credit="NASA/JPL-Caltech/CAB(CSIC-INTA)",
+             product_id="Mars 2020 MEDA daily weather summary feed",
+             purpose="Jezero surface weather: MEDA daily min/max air temperature, pressure, sunrise/sunset")
+    feed = json.loads(dest.read_text())
+    tf = Transformer.from_crs("+proj=longlat +R=3396190 +no_defs", local_proj4("jezero"), always_xy=True)
+    num = lambda v: None if v in (None, "--", "") else float(v)
+    sols = []
+    for s in sorted(feed.get("sols", []), key=lambda q: int(q["sol"])):
+        st = station_for_sol(int(s["sol"]))
+        xy = list(tf.transform(st["lon"], st["lat"])) if st else None
+        sols.append({
+            "sol": int(s["sol"]), "earth_date": s["terrestrial_date"], "ls_deg": num(s.get("ls")), "season": s.get("season"),
+            "min_air_temp_c": num(s.get("min_temp")), "max_air_temp_c": num(s.get("max_temp")), "pressure_pa": num(s.get("pressure")),
+            "sunrise_lmst": s.get("sunrise"), "sunset_lmst": s.get("sunset"),
+            "station": None if not st else {"sol_of_fix": st["sol"], "rmc": st["RMC"], "lon": st["lon"], "lat": st["lat"], "x": round(xy[0], 1), "y": round(xy[1], 1)},
+        })
+    out = {"schema": "marsdelta.meda_daily.v1", "source": FEED_URL, "retrieved": now_iso(), "sha256": sha256(dest),
+           "instrument": "MEDA (Mars Environmental Dynamics Analyzer), Perseverance rover",
+           "note": "Daily summary values as published by NASA. '--' in the feed is kept as missing. Archived measurements, not a forecast.",
+           "sols": sols}
+    write_json(WEB_DATA / "jezero" / "meda_daily.json", out)
+    print(f"meda daily: {len(sols)} sols {sols[0]['sol'] if sols else '-'}-{sols[-1]['sol'] if sols else '-'}")
