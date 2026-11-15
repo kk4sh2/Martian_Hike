@@ -64,8 +64,15 @@ function netState() {
   const upd = () => { const off = !navigator.onLine; el.textContent = off ? 'OFFLINE · cached data' : navigator.serviceWorker?.controller ? '✓ Works offline' : 'Online'; el.classList.toggle('off', off); };
   window.addEventListener('online', upd); window.addEventListener('offline', upd);
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-    navigator.serviceWorker.register('./sw.js').then(() => navigator.serviceWorker.ready).then(upd).catch(() => upd());
-    navigator.serviceWorker.addEventListener('controllerchange', upd);
+    // When a newer version is deployed, the new service worker takes over and the page reloads once onto it.
+    const hadController = !!navigator.serviceWorker.controller;
+    let reloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      upd();
+      if (hadController && !reloaded) { reloaded = true; location.reload(); }
+    });
+    navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
+      .then((reg) => { reg.update().catch(() => {}); return navigator.serviceWorker.ready; }).then(upd).catch(() => upd());
   }
   upd();
 }
