@@ -13,6 +13,17 @@ const rec = (name, pass, detail) => { results.push({ name, pass, detail }); cons
   const errors = []; p.on('pageerror', (e) => errors.push(e.message));
   await p.goto(BASE, { waitUntil: 'networkidle' }); await p.waitForSelector('#cRoutes');
   const panel = () => p.textContent('#panel');
+  // Only the Route section is open when the planner first loads; the tests below then open every section to read it.
+  const openAll = () => p.evaluate(() => document.querySelectorAll('#panel .card.collapsed').forEach((c) => c.classList.remove('collapsed')));
+  const openCards = async () => p.$$eval('#panel .card', (cs) => cs.filter((c) => !c.classList.contains('collapsed')).map((c) => c.id));
+  const jzOpen = await openCards();
+  await p.click('#areaSel button[data-area=nili]'); await p.waitForTimeout(600);
+  const niOpen = await openCards();
+  await p.click('#areaSel button[data-area=jezero]'); await p.waitForTimeout(600);
+  rec('Planner opens with only the Route section expanded (both areas)', jzOpen.join() === 'cRoutes' && niOpen.join() === 'cRoutes', `Jezero open: ${jzOpen.join(', ')}; Nili open: ${niOpen.join(', ')}`);
+  const logo = await p.$eval('header .brand img.logo', (i) => i.complete && i.naturalWidth > 0).catch(() => false);
+  rec('Header shows the MarsDelta logo image', logo, logo ? 'logo.png loaded' : 'logo missing');
+  await openAll();
 
   // 1. ground photo traced to mission record
   await p.evaluate(() => document.getElementById('cPhotos').classList.remove('collapsed'));
@@ -65,7 +76,7 @@ const rec = (name, pass, detail) => { results.push({ name, pass, detail }); cons
   await p.evaluate(() => document.querySelector('#mcReset').click()); await p.waitForTimeout(400);
 
   // 5. Nili: intersecting, clear, outside coverage
-  await p.click('#areaSel button[data-area=nili]'); await p.waitForTimeout(800);
+  await p.click('#areaSel button[data-area=nili]'); await p.waitForTimeout(800); await openAll();
   const st = {};
   for (const id of ['crossing', 'south', 'east']) { await p.click(`[data-route=${id}]`); await p.waitForTimeout(400); st[id] = (await p.textContent('#cChange')).match(/Route impact[^\n]*?\n?([\s\S]*?)Covered by analysis: ([^.]+)/)?.[0]?.replace(/\s+/g, ' ').slice(0, 220); }
   rec('Intersecting / non-intersecting / out-of-coverage routes give different, correct results',
@@ -73,10 +84,10 @@ const rec = (name, pass, detail) => { results.push({ name, pass, detail }); cons
   await p.click('[data-route=crossing]'); await p.waitForTimeout(300);
 
   // 6. leakage
-  await p.click('#areaSel button[data-area=jezero]'); await p.waitForTimeout(600);
+  await p.click('#areaSel button[data-area=jezero]'); await p.waitForTimeout(600); await openAll();
   const jt = await panel(); const jl = await p.textContent('#legend');
   rec('Nili Patera evidence never appears in Jezero', !/NP-0|PSP_00|PIA15680/.test(jt + jl) && /no change analysis here/.test(await p.textContent('#cRoutes')) && (await p.textContent('#decision')).trim() === '', 'Jezero panel/legend free of Nili IDs; Jezero routes report "no change analysis here"; no alert banner');
-  await p.click('#areaSel button[data-area=nili]'); await p.waitForTimeout(600);
+  await p.click('#areaSel button[data-area=nili]'); await p.waitForTimeout(600); await openAll();
   const nt = await panel();
   rec('Jezero surface weather never appears in Nili', /No surface weather is shown for Nili Patera/.test(nt) && !/MEDA station/.test(nt), 'Nili card states no surface weather');
 
@@ -110,7 +121,7 @@ const rec = (name, pass, detail) => { results.push({ name, pass, detail }); cons
   rec('Survival check shows reserve margin, turn-back point, shelter, daylight and dust', /spare above the reserve|short of the reserve/.test(sv) && /Turn back by|No turn-back point/.test(sv) && /to shelter/.test(sv) && /sunset/.test(sv) && /Dust/.test(sv), sv.replace(/\s+/g, ' ').slice(0, 220));
 
   // 7. crew: drop tablet, move, interrupt link, restore
-  await p.click('#areaSel button[data-area=jezero]'); await p.waitForTimeout(400);
+  await p.click('#areaSel button[data-area=jezero]'); await p.waitForTimeout(400); await openAll();
   await p.click('#viewSel button[data-view=tablet]'); await p.click('#tbReset'); await p.waitForTimeout(200);
   await p.click('#tbScen'); await p.click('[data-tcs=drop]'); await p.click('#tbStart'); await p.waitForTimeout(2500);
   const s1 = await p.textContent('#tbSide');
@@ -160,7 +171,7 @@ const rec = (name, pass, detail) => { results.push({ name, pass, detail }); cons
   await ctx.setOffline(true);
   await p.reload({ waitUntil: 'domcontentloaded' }); await p.waitForTimeout(2500);
   const offOk = await p.evaluate(() => !!document.querySelector('#cRoutes') && document.querySelectorAll('.leaflet-image-layer').length > 0);
-  await p.click('#areaSel button[data-area=nili]').catch(() => {}); await p.waitForTimeout(800);
+  await p.click('#areaSel button[data-area=nili]').catch(() => {}); await p.waitForTimeout(800); await openAll();
   const offN = await p.evaluate(() => !!document.querySelector('#cChange'));
   rec('Works offline (airplane mode) after first load', offOk && offN, `offline reload: planner ${offOk}, Nili evidence ${offN}, pill "${await p.textContent('#netState')}"`);
   await p.screenshot({ path: '/tmp/shots/offline_nili.png' });
