@@ -9,6 +9,10 @@ One site holds both a planner view and a landscape astronaut tablet view. The ta
 
 This is a hackathon demonstration. It is not flight software, it is not certified for safety, and it is not endorsed by NASA. All crew positions, wearer signals, the habitat placement and mission events are simulated, and the site labels them that way.
 
+## Live site
+
+https://kk4sh2.github.io/Martian_Hike/ is rebuilt and deployed by `.github/workflows/pages.yml` on every push to `main`. One-time setup: in the repository's Settings → Pages, set Source to "GitHub Actions".
+
 ## Run the demo (no build)
 
 ```bash
