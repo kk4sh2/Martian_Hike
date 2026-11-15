@@ -1,7 +1,17 @@
 {
-  "date": "2026-11-14T13:03:16.220Z",
+  "date": "2026-11-15T07:07:10.130Z",
   "base": "http://localhost:4173/",
   "results": [
+    {
+      "name": "Planner opens with only the Route section expanded (both areas)",
+      "pass": true,
+      "detail": "Jezero open: cRoutes; Nili open: cRoutes"
+    },
+    {
+      "name": "Header shows the MarsDelta logo image",
+      "pass": true,
+      "detail": "logo.png loaded"
+    },
     {
       "name": "Ground photo traces to its mission record",
       "pass": true,
@@ -50,7 +60,7 @@
     {
       "name": "Side panel can be hidden and shown; header has no prototype label",
       "pass": true,
-      "detail": "hidden: map full width true; shown again true; header \"Δ MarsDelta Jezero Crater Nili Patera Planner Tablet Globe ✓ Works offline ▶ Demo Sources Hide panel\""
+      "detail": "hidden: map full width true; shown again true; header \"MarsDelta Jezero Crater Nili Patera Planner Tablet Globe ✓ Works offline ▶ Demo Sources Hide panel\""
     },
     {
       "name": "Sources tab is organised into sections with the moved details",
@@ -85,7 +95,7 @@
     {
       "name": "Emergency return gives a route home with distance, time and oxygen needed",
       "pass": true,
-      "detail": "⚠Emergency return to habitat89 m · about 3 min · needs ~1% O₂ · follow the red dashed route"
+      "detail": "⚠Emergency return to habitat94 m · about 3 min · needs ~1% O₂ · follow the red dashed route"
     },
     {
       "name": "Tablet touch targets ≥ 44 px",
@@ -111,6 +121,11 @@
       "name": "Guided Nili demo runs end to end and logs the decision",
       "pass": true,
       "detail": "log contains simulated receipt, bypass result and acknowledgement"
+    },
+    {
+      "name": "Tour of Mars demo flies the globe to highlighted places and measures Jezero to Nili",
+      "pass": true,
+      "detail": "Welcome to Mars → Olympus Mons: the tallest volcano → Valles Marineris: a giant canyon → Jezero Crater: an ancient lake → Nili Patera: dunes that move → dist:814 km → How far apart are they? → Gale Crater: Curiosity's home → Your turn"
     },
     {
       "name": "Works offline (airplane mode) after first load",

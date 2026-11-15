@@ -204,17 +204,17 @@ function renderPanel(area: AreaId) {
   const sim = '<span class="tag sim">simulated</span>';
   const html: string[] = [];
   html.push(card('cRoutes', 'Route', area === 'nili' ? sim : '', routesHtml(area, plans)));
-  if (area === 'nili') html.push(card('cChange', 'Ground change alerts', '', changeHtml(plans)));
-  html.push(card('cMC', 'Can we make it back?', '', mcHtml(plans)));
-  html.push(card('cSurv', 'Survival check', '<span class="tag sim">model</span>', survivalHtml(area)));
+  if (area === 'nili') html.push(card('cChange', 'Ground change alerts', '', changeHtml(plans), true));
+  html.push(card('cMC', 'Can we make it back?', '', mcHtml(plans), true));
+  html.push(card('cSurv', 'Survival check', '<span class="tag sim">model</span>', survivalHtml(area), true));
   if (area === 'jezero') {
-    html.push(card('cBrief', 'Landing site', '', briefingHtml()));
-    html.push(card('cWx', 'Weather', '', weatherHtml('jezero')));
+    html.push(card('cBrief', 'Landing site', '', briefingHtml(), true));
+    html.push(card('cWx', 'Weather', '', weatherHtml('jezero'), true));
     html.push(card('cPhotos', 'Ground photos at the stops', '', photosHtml(), true));
   } else {
     html.push(card('cWx', 'Weather', '', weatherHtml('nili'), true));
   }
-  html.push(card('cCrew', 'Crew', sim, crewHtml(area)));
+  html.push(card('cCrew', 'Crew', sim, crewHtml(area), true));
   html.push(card('cLog', 'Mission log', '', logHtml(area), true));
   el.innerHTML = html.join('');
   el.querySelectorAll('.card').forEach((c) => {

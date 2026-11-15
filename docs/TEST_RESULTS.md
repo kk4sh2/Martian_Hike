@@ -1,15 +1,17 @@
-# Test results (2026-11-14)
+# Test results (2026-11-15)
 
 | Suite | Result |
 |---|---|
 | Unit (vitest) `cd web && npm test` | 8 / 8 pass |
 | Pipeline validation `python3 -m marsdelta_pipeline validate` | 177 / 177 checks pass |
-| Acceptance (Playwright, built site) `node web/tests/e2e.cjs` | 24 pass, 0 fail, 0 blocked |
+| Acceptance (Playwright, built site) `node web/tests/e2e.cjs` | 27 pass, 0 fail, 0 blocked |
 
 Raw output: [e2e_results.json](e2e_results.json).
 
 | Test | Result | Evidence |
 |---|---|---|
+| Planner opens with only the Route section expanded (both areas) | PASS | Jezero open: cRoutes; Nili open: cRoutes |
+| Header shows the MarsDelta logo image | PASS | logo.png loaded |
 | Ground photo traces to its mission record | PASS | ZL0_0414_0703684150_456EBY_N0220788ZCAM08428_1100LMJ → RMC 22_788 (sol 413), raw-image page https://mars.nasa.gov/mars2020/multimedia/raw-images/ZL0_0414_0703684150_456EBY_N0220788ZCAM08428_1100LMJ |
 | Moving the landing pin updates the briefing | PASS | pin text changed: 18.45426° N, 77.41089° E |
 | Pin move changes distance to a dated MEDA observation; missing interval explicit | PASS | distance 5.5 km → 5.2 km after moving the pin; gaps shown as "not reported"/"gap"; NASA MEDA daily summary |
